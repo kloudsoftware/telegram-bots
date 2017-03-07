@@ -1,37 +1,61 @@
 package io.kloudfile.telegram.infosys;
 
+import io.kloudfile.telegram.bot.InfosysBot;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.log4j.Logger;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
+@Component
 public final class InfosysQuery {
-    private static CloseableHttpClient closeableHttpClient = HttpClients.createDefault();
+    private final CloseableHttpClient closeableHttpClient;
     private static final String BASE_URL = "http://splan.hs-el.de/mobile_test/index.php/json/messages/%23SPLUSD82745/1353";
-    private static final InfosysParser parser = new InfosysParser();
+    private final InfosysParser parser = new InfosysParser();
+    private int lastID = -1;
+    private InfosysBot infosysBot;
 
-    public static List<InfosysMessageBean> getInfosysMessages() {
-        HttpGet httpget = new HttpGet(BASE_URL);
-        httpget.setHeader("http.protocol.content-charset", "UTF-8");
-        try {
-            return parser.getAllMessages(closeableHttpClient.execute(httpget));
-        } catch (IOException e) {
-            // FIXME: 07/03/2017 Error handling
-        }
+    private final Logger logger = Logger.getLogger(this.getClass());
 
-        return null;
+    public InfosysQuery() {
+        closeableHttpClient = HttpClients.createDefault();
+        infosysBot = new InfosysBot(closeableHttpClient);
     }
 
-    public static List<InfosysMessageBean> getRelevantInfosysMessages(final List<String> keywords) {
-        HttpGet httpget = new HttpGet(BASE_URL);
+    @Scheduled(fixedRate = 60000)
+    public void run() {
         try {
-            return parser.getRelevantMessages(closeableHttpClient.execute(httpget), keywords);
-        } catch (IOException e) {
-            // FIXME: 07/03/2017 Error handling
-        }
+            List<InfosysMessageBean> messagesBuffer = getMessages();
 
-        return null;
+            final List<InfosysMessageBean> messagesToBroadcast = new ArrayList<>();
+
+            messagesBuffer.forEach(infosysMessageBean -> {
+                int tempID = Integer.parseInt(infosysMessageBean.getId());
+                if (tempID > lastID) {
+                    messagesToBroadcast.add(infosysMessageBean);
+                    lastID = tempID;
+                }
+            });
+
+            if (!messagesToBroadcast.isEmpty()) {
+                logger.info("Found new messages, broadcasting them");
+                infosysBot.update(messagesToBroadcast);
+            }
+
+        } catch (IOException e) {
+            // FIXME: 07/03/2017 Error Handling
+            e.printStackTrace();
+        }
+    }
+
+    private List<InfosysMessageBean> getMessages() throws IOException {
+        HttpGet httpget = new HttpGet(BASE_URL);
+        httpget.setHeader("http.protocol.content-charset", "UTF-8");
+
+        return parser.getAllMessages(closeableHttpClient.execute(httpget));
     }
 }
