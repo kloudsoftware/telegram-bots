@@ -16,7 +16,7 @@ public final class InfosysQuery {
     private final CloseableHttpClient closeableHttpClient;
     private static final String BASE_URL = "http://splan.hs-el.de/mobile_test/index.php/json/messages/%23SPLUSD82745/1353";
     private final InfosysParser parser = new InfosysParser();
-    private int lastID = -1;
+    private int lastDate = -1;
     private InfosysBot infosysBot;
 
     private final Logger logger = Logger.getLogger(this.getClass());
@@ -34,10 +34,10 @@ public final class InfosysQuery {
             final List<InfosysMessageBean> messagesToBroadcast = new ArrayList<>();
 
             messagesBuffer.forEach(infosysMessageBean -> {
-                int tempID = Integer.parseInt(infosysMessageBean.getId());
-                if (tempID > lastID) {
+                int currDate = infosysMessageBean.getCreated();
+                if (currDate > lastDate) {
                     messagesToBroadcast.add(infosysMessageBean);
-                    lastID = tempID;
+                    lastDate = currDate;
                 }
             });
 
