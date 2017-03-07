@@ -29,7 +29,6 @@ public final class InfosysQuery {
     public InfosysQuery() {
         closeableHttpClient = HttpClients.createDefault();
         infosysBot = new InfosysBot(fileService);
-        infosysBot = new InfosysBot(closeableHttpClient);
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -1);
