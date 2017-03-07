@@ -1,34 +1,52 @@
 package io.kloudfile.telegram.bot;
 
-
-import io.kloudfile.telegram.bot.dto.ResponseDTO;
-import io.kloudfile.telegram.bot.dto.Result;
 import io.kloudfile.telegram.bot.query.Query;
 import io.kloudfile.telegram.infosys.InfosysMessageBean;
-import org.apache.http.impl.client.CloseableHttpClient;
+import io.kloudfile.telegram.persistence.services.FileService;
 
+import java.util.Date;
 import java.util.List;
 
-public class InfosysBot {
+public class InfosysBot implements Bot {
 
-    private CloseableHttpClient httpClient;
+    private FileService fileService;
 
-    public InfosysBot(CloseableHttpClient closeableHttpClient) {
-        this.httpClient = closeableHttpClient;
+    public InfosysBot(FileService fileService) {
+        this.fileService = fileService;
     }
 
-    public void update(List<InfosysMessageBean> message) {
-        ResponseDTO responseDTO = Query.queryChats(this);
-        for (Result result : responseDTO.getResult()) {
-            Query.sendMessage(this, result.getMessage().getChat().getId(), "Hallo");
+    public void update(List<InfosysMessageBean> messages) {
+        StringBuilder messageBuilder = new StringBuilder();
+
+        if (messages.size() == 1) {
+            messageBuilder.append("Neue Infosys Nachricht:");
+            messageBuilder.append(buildMsg(messages.get(0)));
+        } else {
+            messageBuilder.append("Neue Infosys Nachrichten:");
+            for (InfosysMessageBean messageBean : messages) {
+                messageBuilder.append(buildMsg(messageBean));
+            }
         }
-    }
 
-    public String getBotUsername() {
-        return "HEL9000_bot";
+        String message = messageBuilder.toString();
+
+        for (Integer integer : fileService.getChatIdSet()) {
+            Query.sendMessage(this, integer, message);
+        }
+
     }
 
     public String getBotToken() {
         return "";
+    }
+
+    private String buildMsg(InfosysMessageBean messageBean) {
+        StringBuilder msgBuilder = new StringBuilder();
+        msgBuilder.append(new Date(messageBean.getCreated()).toString()).append("\n");
+        msgBuilder.append(messageBean.getTitle()).append("\n");
+        msgBuilder.append(messageBean.getDescription()).append("\n");
+        msgBuilder.append(messageBean.getLink());
+        msgBuilder.append(messageBean.getCreator());
+        return msgBuilder.toString();
     }
 }

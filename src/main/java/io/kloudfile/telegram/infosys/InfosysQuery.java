@@ -1,10 +1,12 @@
 package io.kloudfile.telegram.infosys;
 
 import io.kloudfile.telegram.bot.InfosysBot;
+import io.kloudfile.telegram.persistence.services.FileService;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -19,11 +21,14 @@ public final class InfosysQuery {
     private int lastID = -1;
     private InfosysBot infosysBot;
 
+    @Autowired
+    private FileService fileService;
+
     private final Logger logger = Logger.getLogger(this.getClass());
 
     public InfosysQuery() {
         closeableHttpClient = HttpClients.createDefault();
-        infosysBot = new InfosysBot(closeableHttpClient);
+        infosysBot = new InfosysBot(fileService);
     }
 
     @Scheduled(fixedRate = 60000)
