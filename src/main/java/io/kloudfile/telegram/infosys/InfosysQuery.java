@@ -31,7 +31,6 @@ public final class InfosysQuery {
         infosysBot = new InfosysBot(fileService);
 
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -1);
 
         lastDate = calendar.getTime().getTime() / 1000;
     }
