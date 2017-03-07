@@ -16,7 +16,7 @@ public final class InfosysQuery {
     private final CloseableHttpClient closeableHttpClient;
     private static final String BASE_URL = "http://splan.hs-el.de/mobile_test/index.php/json/messages/%23SPLUSD82745/1353";
     private final InfosysParser parser = new InfosysParser();
-    private int lastDate = -1;
+    private long lastDate;
     private InfosysBot infosysBot;
 
     private final Logger logger = Logger.getLogger(this.getClass());
@@ -24,17 +24,22 @@ public final class InfosysQuery {
     public InfosysQuery() {
         closeableHttpClient = HttpClients.createDefault();
         infosysBot = new InfosysBot(closeableHttpClient);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+
+        lastDate = calendar.getTime().getTime() / 1000;
     }
 
     @Scheduled(fixedRate = 60000)
     public void run() {
         try {
-            List<InfosysMessageBean> messagesBuffer = getMessages();
+            List<InfosysMessageBean> messagesBuffer = reverseList(getMessages());
 
             final List<InfosysMessageBean> messagesToBroadcast = new ArrayList<>();
 
             messagesBuffer.forEach(infosysMessageBean -> {
-                int currDate = infosysMessageBean.getCreated();
+                final long currDate = infosysMessageBean.getCreated();
                 if (currDate > lastDate) {
                     messagesToBroadcast.add(infosysMessageBean);
                     lastDate = currDate;
@@ -57,5 +62,15 @@ public final class InfosysQuery {
         httpget.setHeader("http.protocol.content-charset", "UTF-8");
 
         return parser.getAllMessages(closeableHttpClient.execute(httpget));
+    }
+
+    private List<InfosysMessageBean> reverseList(List<InfosysMessageBean> beanList) {
+        List<InfosysMessageBean> returnList = new ArrayList<>();
+
+        for (int i = beanList.size() - 1; i >= 0; i--) {
+            returnList.add(beanList.get(i));
+        }
+
+        return returnList;
     }
 }

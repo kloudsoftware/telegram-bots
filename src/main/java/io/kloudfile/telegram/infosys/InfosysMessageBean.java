@@ -19,7 +19,7 @@ public final class InfosysMessageBean {
     private String creator;
     @SerializedName("created")
     @Expose
-    private Integer created;
+    private Long created;
     @SerializedName("link")
     @Expose
     private String link;
@@ -56,11 +56,11 @@ public final class InfosysMessageBean {
         this.creator = creator;
     }
 
-    public Integer getCreated() {
+    public Long getCreated() {
         return created;
     }
 
-    public void setCreated(Integer created) {
+    public void setCreated(Long created) {
         this.created = created;
     }
 
