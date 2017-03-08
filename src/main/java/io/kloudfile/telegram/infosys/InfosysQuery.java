@@ -32,7 +32,7 @@ public final class InfosysQuery {
         lastDate -= 24 * 3600;
     }
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 300000)
     public void run() {
         try {
             List<InfosysMessageBean> messagesBuffer = reverseList(getMessages());

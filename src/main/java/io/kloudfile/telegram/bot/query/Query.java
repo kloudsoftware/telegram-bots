@@ -13,6 +13,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ public final class Query {
     private static final String BASE_API_URL = "https://api.telegram.org/bot";
 
     private static final CloseableHttpClient httpClient = HttpClients.createDefault();
+
+    private static final Logger logger = Logger.getLogger(Query.class);
 
     private static Gson gson = new Gson();
 
@@ -48,7 +51,7 @@ public final class Query {
         try {
             httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, HTTP.UTF_8));
             CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpPost);
-            System.out.println(id);
+            logger.info("Sending msg to: " + id);
             closeableHttpResponse.close();
         } catch (IOException e) {
             e.printStackTrace();

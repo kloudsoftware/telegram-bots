@@ -21,7 +21,7 @@ public class FileService {
     }
 
     private void loadFile() {
-        if (createFile()) {
+        if (!createFile()) {
             if (this.chatIdSet.isEmpty()) {
                 try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(chatIdFile))) {
                     this.chatIdSet = (HashSet<Integer>) objectInputStream.readObject();
