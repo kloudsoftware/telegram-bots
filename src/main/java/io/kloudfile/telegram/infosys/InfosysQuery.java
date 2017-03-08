@@ -1,7 +1,6 @@
 package io.kloudfile.telegram.infosys;
 
 import io.kloudfile.telegram.bot.InfosysBot;
-import io.kloudfile.telegram.persistence.services.FileService;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -11,7 +10,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public final class InfosysQuery {
@@ -19,20 +19,17 @@ public final class InfosysQuery {
     private static final String BASE_URL = "http://splan.hs-el.de/mobile_test/index.php/json/messages/%23SPLUSD82745/1353";
     private final InfosysParser parser = new InfosysParser();
     private long lastDate;
-    private InfosysBot infosysBot;
 
     @Autowired
-    private FileService fileService;
+    private InfosysBot infosysBot;
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
     public InfosysQuery() {
         closeableHttpClient = HttpClients.createDefault();
-        infosysBot = new InfosysBot(fileService);
 
-        Calendar calendar = Calendar.getInstance();
-
-        lastDate = calendar.getTime().getTime() / 1000;
+        lastDate = System.currentTimeMillis() / 1000;
+        lastDate -= 24 * 3600;
     }
 
     @Scheduled(fixedRate = 60000)
@@ -42,11 +39,11 @@ public final class InfosysQuery {
 
             final List<InfosysMessageBean> messagesToBroadcast = new ArrayList<>();
 
-            messagesBuffer.forEach(infosysMessageBean -> {
-                final long currDate = infosysMessageBean.getCreated();
-                if (currDate > lastDate) {
-                    messagesToBroadcast.add(infosysMessageBean);
-                    lastDate = currDate;
+            messagesBuffer.forEach(messageCandidate -> {
+                final long candidateDate = messageCandidate.getCreated();
+                if (candidateDate > lastDate) {
+                    messagesToBroadcast.add(messageCandidate);
+                    lastDate = candidateDate;
                 }
             });
 
