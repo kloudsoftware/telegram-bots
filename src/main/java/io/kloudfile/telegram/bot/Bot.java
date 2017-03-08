@@ -10,4 +10,6 @@ import java.util.List;
 public interface Bot {
 
     String getBotToken();
+
+    void exec(String command);
 }
