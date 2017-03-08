@@ -3,7 +3,6 @@ package io.kloudfile.telegram.bot;
 import io.kloudfile.telegram.bot.query.Query;
 import io.kloudfile.telegram.infosys.InfosysMessageBean;
 import io.kloudfile.telegram.persistence.services.FileService;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
