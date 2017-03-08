@@ -27,4 +27,10 @@ public class CallbackController {
         fileService.syncFile();
         return ResponseEntity.ok().build();
     }
+
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity test() {
+        return ResponseEntity.ok().build();
+    }
 }
