@@ -1,8 +1,7 @@
 package io.kloudfile.telegram.web.controller;
 
 import com.google.gson.Gson;
-import io.kloudfile.telegram.bot.dto.ResponseDTO;
-import io.kloudfile.telegram.bot.dto.Result;
+import io.kloudfile.telegram.bot.dto.callbackDTO.ResponseDTO;
 import io.kloudfile.telegram.persistence.services.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,11 +20,7 @@ public class CallbackController {
     @RequestMapping(value = "/telegram/callback/update", method = RequestMethod.POST)
     public void getId(@RequestBody String json) {
         ResponseDTO res = GSON.fromJson(json, ResponseDTO.class);
-        for (Result result : res.getResult()) {
-            fileService.getChatIdSet().add(result.getMessage().getChat().getId());
-        }
+        fileService.getChatIdSet().add(res.getMessage().getChat().getId());
         fileService.syncFile();
-        //Process commands
     }
-
 }

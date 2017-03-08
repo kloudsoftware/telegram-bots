@@ -11,7 +11,7 @@ public class ResponseDTO {
     private Integer updateId;
     @SerializedName("message")
     @Expose
-    private io.kloudfile.telegram.bot.dto.Message message;
+    private Message message;
 
     public Integer getUpdateId() {
         return updateId;
@@ -21,11 +21,11 @@ public class ResponseDTO {
         this.updateId = updateId;
     }
 
-    public io.kloudfile.telegram.bot.dto.Message getMessage() {
+    public Message getMessage() {
         return message;
     }
 
-    public void setMessage(io.kloudfile.telegram.bot.dto.Message message) {
+    public void setMessage(Message message) {
         this.message = message;
     }
 

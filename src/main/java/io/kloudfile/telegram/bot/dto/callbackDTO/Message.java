@@ -3,7 +3,6 @@ package io.kloudfile.telegram.bot.dto.callbackDTO;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import io.kloudfile.telegram.bot.dto.From;
 
 public class Message {
 
@@ -12,13 +11,13 @@ public class Message {
     private Integer date;
     @SerializedName("chat")
     @Expose
-    private io.kloudfile.telegram.bot.dto.Chat chat;
+    private Chat chat;
     @SerializedName("message_id")
     @Expose
     private Integer messageId;
     @SerializedName("from")
     @Expose
-    private io.kloudfile.telegram.bot.dto.From from;
+    private From from;
     @SerializedName("text")
     @Expose
     private String text;
@@ -31,11 +30,11 @@ public class Message {
         this.date = date;
     }
 
-    public io.kloudfile.telegram.bot.dto.Chat getChat() {
+    public Chat getChat() {
         return chat;
     }
 
-    public void setChat(io.kloudfile.telegram.bot.dto.Chat chat) {
+    public void setChat(Chat chat) {
         this.chat = chat;
     }
 
@@ -47,7 +46,7 @@ public class Message {
         this.messageId = messageId;
     }
 
-    public io.kloudfile.telegram.bot.dto.From getFrom() {
+    public From getFrom() {
         return from;
     }
 
