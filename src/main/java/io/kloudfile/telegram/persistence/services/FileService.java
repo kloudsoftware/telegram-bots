@@ -21,13 +21,13 @@ public class FileService {
     }
 
     private void loadFile() {
-        createFile();
-
-        if(this.chatIdSet.isEmpty()) {
-            try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(chatIdFile))) {
-                this.chatIdSet = (HashSet<Integer>) objectInputStream.readObject();
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+        if (createFile()) {
+            if (this.chatIdSet.isEmpty()) {
+                try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(chatIdFile))) {
+                    this.chatIdSet = (HashSet<Integer>) objectInputStream.readObject();
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -42,15 +42,18 @@ public class FileService {
         }
     }
 
-    private void createFile() {
+    private boolean createFile() {
         if (!chatIdFile.exists()) {
             try {
                 if (!chatIdFile.createNewFile()) {
                     logger.log(Level.FATAL, "Could not save file, check writepriveledges");
+                } else {
+                    return true;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        return false;
     }
 }
