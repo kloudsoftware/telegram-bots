@@ -11,13 +11,14 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-public class InfosysBot implements Bot {
+public class InfosysBot implements Bot<List<InfosysMessageBean>> {
 
 
     @Autowired
     private FileService fileService;
 
-    public void update(List<InfosysMessageBean> messages) {
+    @Override
+    public void post(List<InfosysMessageBean> messages) {
         StringBuilder messageBuilder = new StringBuilder();
 
         if (messages.size() == 1) {
