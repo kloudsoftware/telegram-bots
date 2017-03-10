@@ -1,4 +1,4 @@
-package io.kloudfile.telegram.bot;
+package io.kloudfile.telegram.bot.bots;
 
 
 import io.kloudfile.telegram.persistence.services.FileService;

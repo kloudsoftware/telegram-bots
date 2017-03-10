@@ -1,18 +1,14 @@
 package io.kloudfile.telegram.bot.query;
 
 import com.google.gson.Gson;
-import io.kloudfile.telegram.bot.Bot;
-import io.kloudfile.telegram.bot.InfosysBot;
+import io.kloudfile.telegram.bot.bots.Bot;
+import io.kloudfile.telegram.bot.bots.InfosysBot;
 import io.kloudfile.telegram.bot.dto.ResponseDTO;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
@@ -43,12 +39,17 @@ public final class Query {
         ResponseDTO responseDTO = null;
         String queryURL = BASE_API_URL + bot.getBotToken();
 
-        HttpGet httpGet = new HttpGet(queryURL + "/getUpdates");
-        if(limit > 1) {
+        HttpPost httpPost = new HttpPost(queryURL + "/getUpdates");
+        if (limit > 0) {
             List<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("limit", String.valueOf(limit)));
+            try {
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, HTTP.UTF_8));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
-        try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
+        try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
             responseDTO = gson.fromJson(EntityUtils.toString(response.getEntity()), ResponseDTO.class);
         } catch (IOException e) {
             e.printStackTrace();
@@ -72,7 +73,7 @@ public final class Query {
         }
     }
 
-    public static void sendImage(Bot bot, int id, File file) throws UnsupportedEncodingException {
+    public static void sendOwnImage(Bot bot, int id, File file) throws UnsupportedEncodingException {
         HttpPost httpPost = new HttpPost(BASE_API_URL + bot.getBotToken() + "/sendPhoto");
         List<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("chat_id", String.valueOf(id)));

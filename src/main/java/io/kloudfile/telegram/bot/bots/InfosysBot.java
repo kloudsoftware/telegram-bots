@@ -1,11 +1,11 @@
-package io.kloudfile.telegram.bot;
+package io.kloudfile.telegram.bot.bots;
 
+import io.kloudfile.telegram.bot.BotContainer;
+import io.kloudfile.telegram.bot.dto.callbackDTO.ResponseDTO;
 import io.kloudfile.telegram.bot.query.Query;
 import io.kloudfile.telegram.infosys.InfosysMessageBean;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -43,8 +43,10 @@ public class InfosysBot extends AbsBot {
     }
 
     @Override
-    public void exec(String command) {
-
+    public void exec(List<String> command, ResponseDTO responseDTO) {
+        if (command.get(0).equalsIgnoreCase("hello")) {
+            Query.sendMessage(this, responseDTO.getMessage().getChat().getId(), "Hallo");
+        }
     }
 
     private String buildMsg(InfosysMessageBean messageBean) {

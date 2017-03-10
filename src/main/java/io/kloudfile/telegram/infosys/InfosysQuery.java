@@ -1,6 +1,6 @@
 package io.kloudfile.telegram.infosys;
 
-import io.kloudfile.telegram.bot.InfosysBot;
+import io.kloudfile.telegram.bot.bots.InfosysBot;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;

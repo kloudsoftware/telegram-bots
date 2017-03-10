@@ -1,6 +1,6 @@
 package io.kloudfile.telegram;
 
-import io.kloudfile.telegram.bot.InfosysBot;
+import io.kloudfile.telegram.bot.bots.InfosysBot;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
