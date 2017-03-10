@@ -33,7 +33,7 @@ public class CallbackController {
     ResponseEntity getId(@RequestBody String json) {
         ResponseDTO res = GSON.fromJson(json, ResponseDTO.class);
 
-        if(res.getMessage() == null) {
+        if(res.getMessage() == null || res.getMessage().getText() == null) {
             return ResponseEntity.ok().build();
         }
 
