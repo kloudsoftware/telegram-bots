@@ -5,19 +5,19 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema telegramdb
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema telegramdb
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
-USE `mydb` ;
+CREATE SCHEMA IF NOT EXISTS `telegramdb` DEFAULT CHARACTER SET utf8 ;
+USE `telegramdb` ;
 
 -- -----------------------------------------------------
--- Table `mydb`.`user`
+-- Table `telegramdb`.`user`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`user` (
+CREATE TABLE IF NOT EXISTS `telegramdb`.`user` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `chat_id` INT NOT NULL,
   `username` VARCHAR(45) NOT NULL,
@@ -28,9 +28,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`keyword`
+-- Table `telegramdb`.`keyword`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`keyword` (
+CREATE TABLE IF NOT EXISTS `telegramdb`.`keyword` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `keyword` VARCHAR(45) NOT NULL,
   `user_id` INT NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`keyword` (
   INDEX `fk_keywords_users_idx` (`user_id` ASC),
   CONSTRAINT `fk_keywords_users`
     FOREIGN KEY (`user_id`)
-    REFERENCES `mydb`.`user` (`id`)
+    REFERENCES `telegramdb`.`user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
