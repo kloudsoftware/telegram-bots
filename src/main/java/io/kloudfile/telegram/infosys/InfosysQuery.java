@@ -31,10 +31,9 @@ public final class InfosysQuery {
         closeableHttpClient = HttpClients.createDefault();
 
         lastDate = System.currentTimeMillis() / 1000;
-        lastDate -= 24 * 3600;
     }
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 300000)
     public void run() {
         try {
             List<InfosysMessageBean> messagesBuffer = reverseList(getMessages());
@@ -45,7 +44,7 @@ public final class InfosysQuery {
                 final long candidateDate = messageCandidate.getCreated();
                 if (candidateDate > lastDate) {
                     messagesToBroadcast.add(messageCandidate);
-                            lastDate = candidateDate;
+                    lastDate = candidateDate;
                 }
             });
 
