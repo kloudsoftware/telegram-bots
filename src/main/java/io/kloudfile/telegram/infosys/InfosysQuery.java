@@ -49,7 +49,7 @@ public final class InfosysQuery {
 
             if (!messagesToBroadcast.isEmpty()) {
                 logger.info("Found new messages, broadcasting them");
-                infosysBot.update(messagesToBroadcast);
+                infosysBot.post(messagesToBroadcast);
             }
 
         } catch (IOException e) {
