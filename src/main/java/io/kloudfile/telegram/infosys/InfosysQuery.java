@@ -16,7 +16,9 @@ import java.util.List;
 @Component
 public final class InfosysQuery {
     private final CloseableHttpClient closeableHttpClient;
-    private static final String BASE_URL = "http://splan.hs-el.de/mobile_test/index.php/json/messages/%23SPLUSD82745/1353";
+    private static final String BASE_URL = "http://splan.hs-el.de/mobile_test/index.php/json/messages/";
+    private static final String SUBJECT_AREA = "%23SPLUSD82745";
+    private String lastMessageID = "0";
     private final InfosysParser parser = new InfosysParser();
     private long lastDate;
 
@@ -29,9 +31,10 @@ public final class InfosysQuery {
         closeableHttpClient = HttpClients.createDefault();
 
         lastDate = System.currentTimeMillis() / 1000;
+        lastDate -= 24 * 3600;
     }
 
-    @Scheduled(fixedRate = 300000)
+    @Scheduled(fixedRate = 60000)
     public void run() {
         try {
             List<InfosysMessageBean> messagesBuffer = reverseList(getMessages());
@@ -42,11 +45,12 @@ public final class InfosysQuery {
                 final long candidateDate = messageCandidate.getCreated();
                 if (candidateDate > lastDate) {
                     messagesToBroadcast.add(messageCandidate);
-                    lastDate = candidateDate;
+                            lastDate = candidateDate;
                 }
             });
 
             if (!messagesToBroadcast.isEmpty()) {
+                this.lastMessageID = messagesToBroadcast.get(messagesToBroadcast.size() - 1).getId();
                 logger.info("Found new messages, broadcasting them");
                 infosysBot.update(messagesToBroadcast);
             }
@@ -58,7 +62,8 @@ public final class InfosysQuery {
     }
 
     private List<InfosysMessageBean> getMessages() throws IOException {
-        HttpGet httpget = new HttpGet(BASE_URL);
+        final String url = BASE_URL + SUBJECT_AREA + "/" + this.lastMessageID;
+        HttpGet httpget = new HttpGet(url);
         httpget.setHeader("http.protocol.content-charset", "UTF-8");
 
         return parser.getAllMessages(closeableHttpClient.execute(httpget));
@@ -66,6 +71,11 @@ public final class InfosysQuery {
 
     private List<InfosysMessageBean> reverseList(List<InfosysMessageBean> beanList) {
         List<InfosysMessageBean> returnList = new ArrayList<>();
+
+        if (0 == beanList.size()) {
+            return returnList;
+        }
+
 
         for (int i = beanList.size() - 1; i >= 0; i--) {
             returnList.add(beanList.get(i));
