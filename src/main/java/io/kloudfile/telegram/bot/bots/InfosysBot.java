@@ -4,6 +4,8 @@ import io.kloudfile.telegram.bot.BotContainer;
 import io.kloudfile.telegram.bot.dto.callbackDTO.ResponseDTO;
 import io.kloudfile.telegram.bot.query.Query;
 import io.kloudfile.telegram.infosys.InfosysMessageBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -13,7 +15,11 @@ import java.util.List;
 @Component
 public class InfosysBot extends AbsBot {
 
-    public InfosysBot() {
+    private final String key;
+
+    @Autowired
+    public InfosysBot(Environment env) {
+        this.key = env.getProperty("infosys.bot.key");
         BotContainer.getInstance().register(this);
     }
 
@@ -39,7 +45,7 @@ public class InfosysBot extends AbsBot {
     }
 
     public String getBotToken() {
-        return "";
+        return key;
     }
 
     @Override

@@ -6,6 +6,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @Component
 public final class InfosysQuery {
     private final CloseableHttpClient closeableHttpClient;
-    private static final String BASE_URL = "http://splan.hs-el.de/mobile_test/index.php/json/messages/";
+    private String BASE_URL;
     private static final String SUBJECT_AREA = "%23SPLUSD82745";
     private String lastMessageID = "0";
     private final InfosysParser parser = new InfosysParser();
@@ -27,8 +28,16 @@ public final class InfosysQuery {
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
-    public InfosysQuery() {
+    @Autowired
+    public InfosysQuery(Environment env) {
         closeableHttpClient = HttpClients.createDefault();
+
+        final boolean isDebug = Boolean.parseBoolean(env.getProperty("app.debug"));
+        if (isDebug) {
+            BASE_URL = env.getProperty("infosys.debug.url");
+        } else {
+            BASE_URL = env.getProperty("infosys.url");
+        }
 
         lastDate = System.currentTimeMillis() / 1000;
     }
