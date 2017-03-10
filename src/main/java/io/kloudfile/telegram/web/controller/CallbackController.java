@@ -32,15 +32,24 @@ public class CallbackController {
     @ResponseBody
     ResponseEntity getId(@RequestBody String json) {
         ResponseDTO res = GSON.fromJson(json, ResponseDTO.class);
+        if(res == null) {
+            logger.fatal("not a valid response");
+        }
+
+        if(res.getMessage() == null) {
+            logger.fatal("no message");
+        }
+
+        if(res.getMessage().getChat() == null) {
+            logger.fatal("no chat");
+        }
         fileService.getChatIdSet().add(res.getMessage().getChat().getId());
         fileService.syncFile();
 
-        logger.info("Message recieved");
 
         String message = res.getMessage().getText();
 
         if (message.startsWith("/")) {
-            logger.info("Command recieved");
             String string[] = message.split(" ");
             string[0] = string[0].substring(1);
             List<String> strings = Arrays.asList(string);
