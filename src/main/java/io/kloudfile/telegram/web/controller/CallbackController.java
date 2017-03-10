@@ -5,6 +5,7 @@ import io.kloudfile.telegram.bot.BotContainer;
 import io.kloudfile.telegram.bot.bots.Bot;
 import io.kloudfile.telegram.bot.dto.callbackDTO.ResponseDTO;
 import io.kloudfile.telegram.persistence.services.FileService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,8 @@ public class CallbackController {
 
     private final Gson GSON = new Gson();
 
+    private final Logger logger = Logger.getLogger(this.getClass());
+
     @Autowired
     private FileService fileService;
 
@@ -32,9 +35,12 @@ public class CallbackController {
         fileService.getChatIdSet().add(res.getMessage().getChat().getId());
         fileService.syncFile();
 
+        logger.info("Message recieved");
+
         String message = res.getMessage().getText();
 
         if (message.startsWith("/")) {
+            logger.info("Command recieved");
             String string[] = message.split(" ");
             string[0] = string[0].substring(1);
             List<String> strings = Arrays.asList(string);
