@@ -2,8 +2,6 @@ package io.kloudfile.telegram.bot;
 
 import io.kloudfile.telegram.bot.query.Query;
 import io.kloudfile.telegram.infosys.InfosysMessageBean;
-import io.kloudfile.telegram.persistence.services.FileService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -11,11 +9,11 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-public class InfosysBot implements Bot {
+public class InfosysBot extends AbsBot {
 
-
-    @Autowired
-    private FileService fileService;
+    public InfosysBot() {
+        BotContainer.getInstance().register(this);
+    }
 
     public void update(List<InfosysMessageBean> messages) {
         StringBuilder messageBuilder = new StringBuilder();
