@@ -32,17 +32,11 @@ public class CallbackController {
     @ResponseBody
     ResponseEntity getId(@RequestBody String json) {
         ResponseDTO res = GSON.fromJson(json, ResponseDTO.class);
-        if(res == null) {
-            logger.fatal("not a valid response");
-        }
 
         if(res.getMessage() == null) {
-            logger.fatal("no message");
+            return ResponseEntity.ok().build();
         }
 
-        if(res.getMessage().getChat() == null) {
-            logger.fatal("no chat");
-        }
         fileService.getChatIdSet().add(res.getMessage().getChat().getId());
         fileService.syncFile();
 
