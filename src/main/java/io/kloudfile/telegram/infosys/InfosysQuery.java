@@ -15,15 +15,13 @@ import java.util.List;
 
 @Component
 public final class InfosysQuery {
-    private final CloseableHttpClient closeableHttpClient;
     private static final String BASE_URL = "http://splan.hs-el.de/mobile_test/index.php/json/messages/%23SPLUSD82745/1353";
+    private final CloseableHttpClient closeableHttpClient;
     private final InfosysParser parser = new InfosysParser();
+    private final Logger logger = Logger.getLogger(this.getClass());
     private long lastDate;
-
     @Autowired
     private InfosysBot infosysBot;
-
-    private final Logger logger = Logger.getLogger(this.getClass());
 
     public InfosysQuery() {
         closeableHttpClient = HttpClients.createDefault();
