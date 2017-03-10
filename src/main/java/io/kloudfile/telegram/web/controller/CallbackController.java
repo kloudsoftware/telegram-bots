@@ -58,6 +58,7 @@ public class CallbackController {
     public
     @ResponseBody
     ResponseEntity test() {
+        logger.info("Test recieved");
         return ResponseEntity.ok().build();
     }
 }
