@@ -8,16 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbsBot implements Bot {
 
-    protected final FileService fileService;
-
-    protected final KeywordRepository keywordRepository;
-
-    protected final UserRepository userRepository;
+    @Autowired
+    protected FileService fileService;
 
     @Autowired
-    public AbsBot(FileService fileService, KeywordRepository keywordRepository, UserRepository userRepository) {
-        this.fileService = fileService;
-        this.keywordRepository = keywordRepository;
-        this.userRepository = userRepository;
-    }
+    protected KeywordRepository keywordRepository;
+
+    @Autowired
+    protected UserRepository userRepository;
+
 }
