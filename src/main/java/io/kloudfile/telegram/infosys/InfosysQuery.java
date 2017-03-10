@@ -29,7 +29,6 @@ public final class InfosysQuery {
         closeableHttpClient = HttpClients.createDefault();
 
         lastDate = System.currentTimeMillis() / 1000;
-        lastDate -= 24 * 3600;
     }
 
     @Scheduled(fixedRate = 300000)
