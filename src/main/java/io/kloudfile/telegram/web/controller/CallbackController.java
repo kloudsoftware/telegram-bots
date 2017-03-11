@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import io.kloudfile.telegram.bot.BotContainer;
 import io.kloudfile.telegram.bot.bots.Bot;
 import io.kloudfile.telegram.bot.dto.callbackDTO.ResponseDTO;
+import io.kloudfile.telegram.persistence.entities.User;
+import io.kloudfile.telegram.persistence.repos.UserRepository;
 import io.kloudfile.telegram.persistence.services.FileService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class CallbackController {
@@ -27,19 +30,31 @@ public class CallbackController {
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @RequestMapping(value = "/telegram/callback/update", method = RequestMethod.POST)
     public
     @ResponseBody
     ResponseEntity getId(@RequestBody String json) {
         ResponseDTO res = GSON.fromJson(json, ResponseDTO.class);
 
-        if(res.getMessage() == null || res.getMessage().getText() == null) {
+        if (res.getMessage() == null || res.getMessage().getText() == null) {
             return ResponseEntity.ok().build();
         }
 
-        fileService.getChatIdSet().add(res.getMessage().getChat().getId());
-        fileService.syncFile();
 
+        final Integer chatID = res.getMessage().getChat().getId();
+        final String username = res.getMessage().getFrom().getUsername();
+
+        Optional<User> foundUser = userRepository.findByChatId(chatID);
+
+        if (!foundUser.isPresent()) {
+            User user = new User();
+            user.setChatId(chatID);
+            user.setUsername(username);
+            userRepository.save(user);
+        }
 
         String message = res.getMessage().getText();
 
@@ -47,7 +62,7 @@ public class CallbackController {
             String string[] = message.split(" ");
             string[0] = string[0].substring(1);
             List<String> strings = Arrays.asList(string);
-            for(Bot bot : BotContainer.getInstance().getBotList()) {
+            for (Bot bot : BotContainer.getInstance().getBotList()) {
                 bot.exec(strings, res);
             }
         }
