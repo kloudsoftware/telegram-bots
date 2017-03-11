@@ -66,7 +66,14 @@ public final class Query {
         try {
             httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, HTTP.UTF_8));
             CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpPost);
-            logger.info("Sending msg to: " + id);
+
+            final int responseCode = closeableHttpResponse.getStatusLine().getStatusCode();
+            final String responseStatusLine = closeableHttpResponse.getStatusLine().getReasonPhrase();
+
+            if (200 != responseCode) {
+                logger.error("Failed sending message to " + id + ". Error: " + responseStatusLine + ". Code: " + responseCode);
+            }
+
             closeableHttpResponse.close();
         } catch (IOException e) {
             e.printStackTrace();
