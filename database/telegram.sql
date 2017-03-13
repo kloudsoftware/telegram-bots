@@ -20,7 +20,7 @@ USE `telegramdb` ;
 CREATE TABLE IF NOT EXISTS `telegramdb`.`user` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `chat_id` INT NOT NULL,
-  `username` VARCHAR(45) NOT NULL,
+  `username` VARCHAR(45) NULL,
   `firstname` VARCHAR(45) NULL,
   `lastname` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
