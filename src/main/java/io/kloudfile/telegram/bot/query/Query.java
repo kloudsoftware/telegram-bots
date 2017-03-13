@@ -2,7 +2,6 @@ package io.kloudfile.telegram.bot.query;
 
 import com.google.gson.Gson;
 import io.kloudfile.telegram.bot.bots.Bot;
-import io.kloudfile.telegram.bot.bots.InfosysBot;
 import io.kloudfile.telegram.bot.dto.infosys.ResponseDTO;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -35,7 +34,7 @@ public final class Query {
 
     private static Gson gson = new Gson();
 
-    public static ResponseDTO queryChats(InfosysBot bot, int limit) {
+    public static ResponseDTO queryChats(Bot bot, int limit) {
         ResponseDTO responseDTO = null;
         String queryURL = BASE_API_URL + bot.getBotToken();
 

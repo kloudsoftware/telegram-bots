@@ -28,6 +28,5 @@ public final class BotContainer {
 
     public void register(AbsBot absBot) {
         botList.add(absBot);
-
     }
 }

@@ -18,15 +18,11 @@ import java.util.stream.Collectors;
 @Component
 public class InfosysBot extends AbsBot {
 
-    private final String key;
-
-    private final UserRepository userRepository;
 
     @Autowired
-    public InfosysBot(Environment env, UserRepository userRepository) {
+    public InfosysBot(Environment env) {
         this.key = env.getProperty("infosys.bot.key");
         BotContainer.getInstance().register(this);
-        this.userRepository = userRepository;
     }
 
     public void update(List<InfosysMessageBean> messages) {
@@ -58,7 +54,9 @@ public class InfosysBot extends AbsBot {
     @Override
     public void exec(String command, List<String> args, ResponseDTO responseDTO) {
         if (args.get(0).equalsIgnoreCase("hello")) {
-            Query.sendMessage(this, responseDTO.getMessage().getChat().getId(), "Hallo");
+            Query.sendMessage(this, responseDTO.getMessage().getChat().getId(),
+                   "Hallo " + (responseDTO.getMessage().getFrom().getUsername()
+                           != null ? responseDTO.getMessage().getFrom().getUsername(): ""));
         }
     }
 

@@ -17,4 +17,6 @@ public abstract class AbsBot implements Bot {
     @Autowired
     protected UserRepository userRepository;
 
+    protected String key;
+
 }
