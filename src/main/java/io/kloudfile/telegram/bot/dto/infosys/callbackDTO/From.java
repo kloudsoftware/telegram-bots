@@ -1,10 +1,10 @@
 
-package io.kloudfile.telegram.bot.dto.callbackDTO;
+package io.kloudfile.telegram.bot.dto.infosys.callbackDTO;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Chat {
+public class From {
 
     @SerializedName("last_name")
     @Expose

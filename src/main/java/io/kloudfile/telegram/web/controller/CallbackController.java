@@ -3,7 +3,7 @@ package io.kloudfile.telegram.web.controller;
 import com.google.gson.Gson;
 import io.kloudfile.telegram.bot.BotContainer;
 import io.kloudfile.telegram.bot.bots.Bot;
-import io.kloudfile.telegram.bot.dto.callbackDTO.ResponseDTO;
+import io.kloudfile.telegram.bot.dto.infosys.callbackDTO.ResponseDTO;
 import io.kloudfile.telegram.persistence.entities.User;
 import io.kloudfile.telegram.persistence.repos.UserRepository;
 import io.kloudfile.telegram.persistence.services.FileService;
