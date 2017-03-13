@@ -58,6 +58,14 @@ public class InfosysBot extends AbsBot {
                    "Hallo " + (responseDTO.getMessage().getFrom().getUsername()
                            != null ? responseDTO.getMessage().getFrom().getUsername(): ""));
         }
+
+        if(command.equalsIgnoreCase("aboutInfoHEL")) {
+            String msg = "Hallo, ich bin HEL9000, ich versende Infosysnachrichten in Telegram-Chats.";
+            msg += "\n Mein Sourcecode liegt auf github: https://github.com/probE466/telegram-bots.";
+            msg += "\n\n Ich werde von @probE466 und @fr3d63 entwickelt.";
+
+            Query.sendMessage(this, responseDTO.getMessage().getChat().getId(), msg);
+        }
     }
 
     private String buildMsg(InfosysMessageBean messageBean) {
