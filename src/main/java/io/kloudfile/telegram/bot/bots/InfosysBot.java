@@ -1,9 +1,11 @@
 package io.kloudfile.telegram.bot.bots;
 
 import io.kloudfile.telegram.bot.BotContainer;
-import io.kloudfile.telegram.bot.dto.callbackDTO.ResponseDTO;
+import io.kloudfile.telegram.bot.dto.infosys.callbackDTO.ResponseDTO;
 import io.kloudfile.telegram.bot.query.Query;
 import io.kloudfile.telegram.infosys.InfosysMessageBean;
+import io.kloudfile.telegram.persistence.entities.User;
+import io.kloudfile.telegram.persistence.repos.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -11,16 +13,20 @@ import org.springframework.stereotype.Component;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class InfosysBot extends AbsBot {
 
     private final String key;
 
+    private final UserRepository userRepository;
+
     @Autowired
-    public InfosysBot(Environment env) {
+    public InfosysBot(Environment env, UserRepository userRepository) {
         this.key = env.getProperty("infosys.bot.key");
         BotContainer.getInstance().register(this);
+        this.userRepository = userRepository;
     }
 
     public void update(List<InfosysMessageBean> messages) {
@@ -38,8 +44,9 @@ public class InfosysBot extends AbsBot {
 
         String message = messageBuilder.toString();
 
-        for (Integer integer : fileService.getChatIdSet()) {
-            Query.sendMessage(this, integer, message);
+        List<Integer> chatIdList = userRepository.findAll().stream().map(User::getChatId).collect(Collectors.toList());
+        for (Integer chatID : chatIdList) {
+            Query.sendMessage(this, chatID, message);
         }
 
     }
@@ -49,8 +56,8 @@ public class InfosysBot extends AbsBot {
     }
 
     @Override
-    public void exec(List<String> command, ResponseDTO responseDTO) {
-        if (command.get(0).equalsIgnoreCase("hello")) {
+    public void exec(String command, List<String> args, ResponseDTO responseDTO) {
+        if (args.get(0).equalsIgnoreCase("hello")) {
             Query.sendMessage(this, responseDTO.getMessage().getChat().getId(), "Hallo");
         }
     }

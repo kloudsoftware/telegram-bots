@@ -3,7 +3,7 @@ package io.kloudfile.telegram.bot.query;
 import com.google.gson.Gson;
 import io.kloudfile.telegram.bot.bots.Bot;
 import io.kloudfile.telegram.bot.bots.InfosysBot;
-import io.kloudfile.telegram.bot.dto.ResponseDTO;
+import io.kloudfile.telegram.bot.dto.infosys.ResponseDTO;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -66,7 +66,14 @@ public final class Query {
         try {
             httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, HTTP.UTF_8));
             CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpPost);
-            logger.info("Sending msg to: " + id);
+
+            final int responseCode = closeableHttpResponse.getStatusLine().getStatusCode();
+            final String responseStatusLine = closeableHttpResponse.getStatusLine().getReasonPhrase();
+
+            if (200 != responseCode) {
+                logger.error("Failed sending message to " + id + ". Error: " + responseStatusLine + ". Code: " + responseCode);
+            }
+
             closeableHttpResponse.close();
         } catch (IOException e) {
             e.printStackTrace();

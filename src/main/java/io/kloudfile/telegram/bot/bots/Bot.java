@@ -1,6 +1,6 @@
 package io.kloudfile.telegram.bot.bots;
 
-import io.kloudfile.telegram.bot.dto.callbackDTO.ResponseDTO;
+import io.kloudfile.telegram.bot.dto.infosys.callbackDTO.ResponseDTO;
 
 import java.util.List;
 
@@ -11,5 +11,5 @@ public interface Bot {
 
     String getBotToken();
 
-    void exec(List<String> command, ResponseDTO responseDTO);
+    void exec(String command, List<String> args, ResponseDTO responseDTO);
 }
