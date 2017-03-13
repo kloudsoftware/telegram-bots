@@ -3,7 +3,7 @@ package io.kloudfile.telegram.bot.query;
 import com.google.gson.Gson;
 import io.kloudfile.telegram.bot.bots.Bot;
 import io.kloudfile.telegram.bot.bots.InfosysBot;
-import io.kloudfile.telegram.bot.dto.ResponseDTO;
+import io.kloudfile.telegram.bot.dto.infosys.ResponseDTO;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;

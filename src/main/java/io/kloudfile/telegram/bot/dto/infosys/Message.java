@@ -1,5 +1,5 @@
 
-package io.kloudfile.telegram.bot.dto;
+package io.kloudfile.telegram.bot.dto.infosys;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

@@ -1,7 +1,7 @@
 package io.kloudfile.telegram.bot.bots;
 
 import io.kloudfile.telegram.bot.BotContainer;
-import io.kloudfile.telegram.bot.dto.callbackDTO.ResponseDTO;
+import io.kloudfile.telegram.bot.dto.infosys.callbackDTO.ResponseDTO;
 import io.kloudfile.telegram.bot.query.Query;
 import io.kloudfile.telegram.infosys.InfosysMessageBean;
 import io.kloudfile.telegram.persistence.entities.User;

@@ -1,26 +1,31 @@
 
-package io.kloudfile.telegram.bot.dto;
+package io.kloudfile.telegram.bot.dto.infosys.callbackDTO;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Chat {
 
+    @SerializedName("last_name")
+    @Expose
+    private String lastName;
     @SerializedName("id")
     @Expose
     private Integer id;
     @SerializedName("first_name")
     @Expose
     private String firstName;
-    @SerializedName("last_name")
-    @Expose
-    private String lastName;
     @SerializedName("username")
     @Expose
     private String username;
-    @SerializedName("type")
-    @Expose
-    private String type;
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
     public Integer getId() {
         return id;
@@ -38,28 +43,12 @@ public class Chat {
         this.firstName = firstName;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
     public String getUsername() {
         return username;
     }
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
 }
