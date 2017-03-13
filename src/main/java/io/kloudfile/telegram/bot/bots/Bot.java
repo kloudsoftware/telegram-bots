@@ -11,5 +11,5 @@ public interface Bot {
 
     String getBotToken();
 
-    void exec(List<String> command, ResponseDTO responseDTO);
+    void exec(String command, List<String> args, ResponseDTO responseDTO);
 }

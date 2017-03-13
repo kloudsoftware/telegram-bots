@@ -44,7 +44,7 @@ public class CallbackController {
         }
 
 
-        final Integer chatID = res.getMessage().getChat().getId();
+        final int chatID = res.getMessage().getChat().getId();
         final String username = res.getMessage().getFrom().getUsername();
 
         Optional<User> foundUser = userRepository.findByChatId(chatID);
@@ -61,9 +61,11 @@ public class CallbackController {
         if (message.startsWith("/")) {
             String string[] = message.split(" ");
             string[0] = string[0].substring(1);
-            List<String> strings = Arrays.asList(string);
+            List<String> args = Arrays.asList(string);
+            String command = args.get(0);
+            args.remove(0);
             for (Bot bot : BotContainer.getInstance().getBotList()) {
-                bot.exec(strings, res);
+                bot.exec(command, args, res);
             }
         }
 
