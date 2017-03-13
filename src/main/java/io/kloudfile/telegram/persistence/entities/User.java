@@ -5,23 +5,39 @@
  */
 package io.kloudfile.telegram.persistence.entities;
 
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
-
+/**
+ *
+ * @author fr3d63
+ */
 @Entity
 @Table(name = "user")
 @XmlRootElement
-//@NamedQueries({
-//    @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
-//    @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
-//    @NamedQuery(name = "User.findByChatId", query = "SELECT u FROM User u WHERE u.chatId = :chatId"),
-//    @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
-//    @NamedQuery(name = "User.findByFirstname", query = "SELECT u FROM User u WHERE u.firstname = :firstname"),
-//    @NamedQuery(name = "User.findByLastname", query = "SELECT u FROM User u WHERE u.lastname = :lastname")})
+/*
+@NamedQueries({
+    @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
+    @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
+    @NamedQuery(name = "User.findByChatId", query = "SELECT u FROM User u WHERE u.chatId = :chatId"),
+    @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
+    @NamedQuery(name = "User.findByFirstname", query = "SELECT u FROM User u WHERE u.firstname = :firstname"),
+    @NamedQuery(name = "User.findByLastname", query = "SELECT u FROM User u WHERE u.lastname = :lastname")})
+*/
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -31,17 +47,22 @@ public class User implements Serializable {
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
+    @NotNull
     @Column(name = "chat_id")
     private int chatId;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
     @Column(name = "username")
     private String username;
+    @Size(max = 45)
     @Column(name = "firstname")
     private String firstname;
+    @Size(max = 45)
     @Column(name = "lastname")
     private String lastname;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private List<Keyword> keywordList;
+    @ManyToMany(mappedBy = "userList")
+    private List<SubjectArea> subjectAreaList;
 
     public User() {
     }
@@ -97,12 +118,12 @@ public class User implements Serializable {
     }
 
     @XmlTransient
-    public List<Keyword> getKeywordList() {
-        return keywordList;
+    public List<SubjectArea> getSubjectAreaList() {
+        return subjectAreaList;
     }
 
-    public void setKeywordList(List<Keyword> keywordList) {
-        this.keywordList = keywordList;
+    public void setSubjectAreaList(List<SubjectArea> subjectAreaList) {
+        this.subjectAreaList = subjectAreaList;
     }
 
     @Override
@@ -127,7 +148,7 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "stuffdb.User[ id=" + id + " ]";
+        return "test.User[ id=" + id + " ]";
     }
-
+    
 }
