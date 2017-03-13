@@ -2,7 +2,9 @@ package io.kloudfile.telegram.web.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import io.kloudfile.telegram.infosys.SubjectArea;
+import io.kloudfile.telegram.infosys.SubjectAreaDTO;
+import io.kloudfile.telegram.persistence.entities.SubjectArea;
+import io.kloudfile.telegram.persistence.repos.SubjectAreaRepository;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -21,14 +23,16 @@ import java.util.List;
 @Controller
 public class SubjectAreaController {
 
+    private final SubjectAreaRepository subjectAreaRepository;
     private Logger logger = Logger.getLogger(this.getClass());
     private String BASE_URL;
     private CloseableHttpClient closeableHttpClient;
-    private List<SubjectArea> subjectAreas;
+    private List<SubjectAreaDTO> subjectAreaDTOS;
 
 
     @Autowired
-    public SubjectAreaController(Environment env) {
+    public SubjectAreaController(Environment env, SubjectAreaRepository subjectAreaRepository) {
+        this.subjectAreaRepository = subjectAreaRepository;
         closeableHttpClient = HttpClients.createDefault();
 
         BASE_URL = env.getProperty("infosys.subject_areas.url");
@@ -41,10 +45,24 @@ public class SubjectAreaController {
         httpget.setHeader("http.protocol.content-charset", "UTF-8");
 
         Gson gson = new Gson();
-        Type type = new TypeToken<List<SubjectArea>>() {}.getType();
+        Type type = new TypeToken<List<SubjectAreaDTO>>() {}.getType();
         try (CloseableHttpResponse response = closeableHttpClient.execute(httpget)) {
-            subjectAreas = gson.fromJson(EntityUtils.toString(response.getEntity()), type);
-            logger.info("Loaded subjectAreas");
+            subjectAreaDTOS = gson.fromJson(EntityUtils.toString(response.getEntity()), type);
+
+            subjectAreaDTOS.forEach(subjectAreaDTO -> {
+                if ("#Institut Ipro-L".equals(subjectAreaDTO.getName())) {
+                    return;
+                }
+
+                if (subjectAreaRepository.findByHostkey(subjectAreaDTO.getHostKey()).isPresent()) {
+                    return;
+                }
+                SubjectArea subjectArea = new SubjectArea();
+                subjectArea.setHostkey(subjectAreaDTO.getHostKey());
+                subjectArea.setName(subjectAreaDTO.getName());
+                subjectAreaRepository.save(subjectArea);
+            });
+            logger.info("Loaded subjectAreaDTOS");
         } catch (IOException e) {
             e.printStackTrace();
         }

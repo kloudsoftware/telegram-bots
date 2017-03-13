@@ -3,7 +3,7 @@ package io.kloudfile.telegram.infosys;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class SubjectArea {
+public class SubjectAreaDTO {
 
     @SerializedName("name")
     @Expose

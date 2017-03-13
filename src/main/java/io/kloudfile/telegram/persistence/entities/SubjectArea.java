@@ -22,10 +22,10 @@ import java.util.List;
 @XmlRootElement
 /*
 @NamedQueries({
-    @NamedQuery(name = "SubjectArea.findAll", query = "SELECT s FROM SubjectArea s"),
-    @NamedQuery(name = "SubjectArea.findById", query = "SELECT s FROM SubjectArea s WHERE s.id = :id"),
-    @NamedQuery(name = "SubjectArea.findByName", query = "SELECT s FROM SubjectArea s WHERE s.name = :name"),
-    @NamedQuery(name = "SubjectArea.findByHostkey", query = "SELECT s FROM SubjectArea s WHERE s.hostkey = :hostkey")})
+    @NamedQuery(name = "SubjectAreaRepository.findAll", query = "SELECT s FROM SubjectAreaRepository s"),
+    @NamedQuery(name = "SubjectAreaRepository.findById", query = "SELECT s FROM SubjectAreaRepository s WHERE s.id = :id"),
+    @NamedQuery(name = "SubjectAreaRepository.findByName", query = "SELECT s FROM SubjectAreaRepository s WHERE s.name = :name"),
+    @NamedQuery(name = "SubjectAreaRepository.findByHostkey", query = "SELECT s FROM SubjectAreaRepository s WHERE s.hostkey = :hostkey")})
 */
 public class SubjectArea implements Serializable {
 
@@ -119,7 +119,7 @@ public class SubjectArea implements Serializable {
 
     @Override
     public String toString() {
-        return "test.SubjectArea[ id=" + id + " ]";
+        return "test.SubjectAreaRepository[ id=" + id + " ]";
     }
     
 }
