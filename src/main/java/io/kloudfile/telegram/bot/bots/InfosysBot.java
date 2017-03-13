@@ -57,7 +57,7 @@ public class InfosysBot extends AbsBot {
 
     @Override
     public void exec(String command, List<String> args, ResponseDTO responseDTO) {
-        if (args.get(0).equalsIgnoreCase("hello")) {
+        if (command.equalsIgnoreCase("hello")) {
             Query.sendMessage(this, responseDTO.getMessage().getChat().getId(), "Hallo");
         }
     }
