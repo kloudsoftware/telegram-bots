@@ -4,7 +4,9 @@ import io.kloudfile.telegram.bot.BotContainer;
 import io.kloudfile.telegram.bot.dto.infosys.callbackDTO.ResponseDTO;
 import io.kloudfile.telegram.bot.query.Query;
 import io.kloudfile.telegram.infosys.InfosysMessageBean;
+import io.kloudfile.telegram.persistence.entities.SubjectArea;
 import io.kloudfile.telegram.persistence.entities.User;
+import io.kloudfile.telegram.persistence.repos.SubjectAreaRepository;
 import io.kloudfile.telegram.persistence.repos.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -21,6 +23,9 @@ public class InfosysBot extends AbsBot {
     private final String key;
 
     private final UserRepository userRepository;
+
+    @Autowired
+    private SubjectAreaRepository subjectAreaRepository;
 
     @Autowired
     public InfosysBot(Environment env, UserRepository userRepository) {
@@ -60,6 +65,45 @@ public class InfosysBot extends AbsBot {
         if (command.equalsIgnoreCase("hello")) {
             Query.sendMessage(this, responseDTO.getMessage().getChat().getId(), "Hallo");
         }
+
+        if (command.equalsIgnoreCase("addsubject")) {
+            addSubjectArea(joinArguments(args), responseDTO);
+        }
+
+        if (command.equalsIgnoreCase("removesubject")) {
+            removeubjectArea(joinArguments(args), responseDTO);
+        }
+    }
+
+    private String joinArguments(List<String> arguments) {
+        String joinedArguments = "";
+
+        for (String argument : arguments) {
+            joinedArguments += " " + argument;
+        }
+
+        return joinedArguments.trim();
+    }
+
+    private void addSubjectArea(String targetSubject, ResponseDTO responseDTO) {
+        userRepository.findByChatId(responseDTO.getMessage().getChat().getId()).ifPresent(user ->
+                subjectAreaRepository.findByName(targetSubject).ifPresent(subjectArea -> {
+                    user.addSubjectArea(subjectArea);
+                    userRepository.flush();
+                }));
+    }
+
+    private void removeubjectArea(String targetSubject, ResponseDTO responseDTO) {
+        userRepository.findByChatId(responseDTO.getMessage().getChat().getId()).ifPresent(user -> {
+            subjectAreaRepository.findByName(targetSubject).ifPresent(subjectArea -> {
+                final List<SubjectArea> subjectAreaList = user.getSubjectAreaList();
+                if (subjectAreaList.contains(subjectArea)) {
+                    subjectAreaList.add(subjectArea);
+                    user.setSubjectAreaList(subjectAreaList);
+                    userRepository.save(user);
+                }
+            });
+        });
     }
 
     private String buildMsg(InfosysMessageBean messageBean) {

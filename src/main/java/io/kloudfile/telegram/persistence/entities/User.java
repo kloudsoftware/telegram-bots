@@ -140,5 +140,12 @@ public class User implements Serializable {
     public String toString() {
         return "test.User[ id=" + id + " ]";
     }
+
+    public void addSubjectArea(SubjectArea subjectArea) {
+        if (!subjectAreaList.contains(subjectArea)) {
+            this.subjectAreaList.add(subjectArea);
+            subjectArea.addUser(this);
+        }
+    }
     
 }

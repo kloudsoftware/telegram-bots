@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface SubjectAreaRepository extends JpaRepository<SubjectArea, Integer> {
     Optional<SubjectArea> findByHostkey(String hostkey);
+
+    Optional<SubjectArea> findByName(String name);
 }
