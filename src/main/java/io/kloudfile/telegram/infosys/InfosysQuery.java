@@ -80,7 +80,7 @@ public final class InfosysQuery {
     private List<InfosysMessageBean> reverseList(List<InfosysMessageBean> beanList) {
         List<InfosysMessageBean> returnList = new ArrayList<>();
 
-        if (0 == beanList.size()) {
+        if (null == beanList || beanList.isEmpty()) {
             return returnList;
         }
 
