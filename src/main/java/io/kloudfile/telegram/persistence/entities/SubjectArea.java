@@ -48,7 +48,7 @@ public class SubjectArea implements Serializable {
     @JoinTable(name = "user_has_subject_area", joinColumns = {
         @JoinColumn(name = "subject_area_id", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "user_id", referencedColumnName = "id")})
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<User> userList;
 
     public SubjectArea() {

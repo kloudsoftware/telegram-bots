@@ -1,6 +1,8 @@
 package io.kloudfile.telegram.infosys;
 
 import io.kloudfile.telegram.bot.bots.InfosysBot;
+import io.kloudfile.telegram.persistence.entities.SubjectArea;
+import io.kloudfile.telegram.persistence.repos.SubjectAreaRepository;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -11,25 +13,24 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Component
 public final class InfosysQuery {
     private final CloseableHttpClient closeableHttpClient;
     private String BASE_URL;
     private static final String SUBJECT_AREA = "%23SPLUSD82745";
-    private String lastMessageID = "0";
+    private Map<SubjectArea, Integer> lastIDMap = new HashMap<>();
     private final InfosysParser parser = new InfosysParser();
-    private long lastDate;
 
     @Autowired
     private InfosysBot infosysBot;
 
     private final Logger logger = Logger.getLogger(this.getClass());
+    private List<SubjectArea> subjectAreas;
 
     @Autowired
-    public InfosysQuery(Environment env) {
+    public InfosysQuery(Environment env, SubjectAreaRepository subjectAreaRepository) {
         closeableHttpClient = HttpClients.createDefault();
 
         final boolean isDebug = Boolean.parseBoolean(env.getProperty("app.debug"));
@@ -39,38 +40,56 @@ public final class InfosysQuery {
             BASE_URL = env.getProperty("infosys.url");
         }
 
-        lastDate = System.currentTimeMillis() / 1000;
+        subjectAreas = subjectAreaRepository.findAll();
+
+        subjectAreas.forEach(subjectArea -> lastIDMap.put(subjectArea, 0));
     }
 
     @Scheduled(fixedRate = 300000)
     public void run() {
-        try {
-            List<InfosysMessageBean> messagesBuffer = reverseList(getMessages());
 
-            final List<InfosysMessageBean> messagesToBroadcast = new ArrayList<>();
+        final long startTimeStamp = System.currentTimeMillis() / 1000;
 
-            messagesBuffer.forEach(messageCandidate -> {
-                final long candidateDate = messageCandidate.getCreated();
-                if (candidateDate > lastDate) {
-                    messagesToBroadcast.add(messageCandidate);
-                    lastDate = candidateDate;
+        final Map<SubjectArea, List<InfosysMessageBean>> keyMessageMap = new HashMap<>();
+
+        subjectAreas.forEach(subjectArea -> {
+            try {
+                long lastDate = startTimeStamp;
+
+                List<InfosysMessageBean> messagesBuffer = reverseList(getMessages(subjectArea));
+
+                final List<InfosysMessageBean> messagesToBroadcast = new ArrayList<>();
+
+                for (InfosysMessageBean messageCandidate : messagesBuffer) {
+                    final long candidateDate = messageCandidate.getCreated();
+                    if (candidateDate > lastDate) {
+                        messagesToBroadcast.add(messageCandidate);
+                        lastDate = candidateDate;
+                    }
                 }
-            });
 
-            if (!messagesToBroadcast.isEmpty()) {
-                this.lastMessageID = messagesToBroadcast.get(messagesToBroadcast.size() - 1).getId();
-                logger.info("Found new messages, broadcasting them");
-                infosysBot.update(messagesToBroadcast);
+                if (messagesToBroadcast.isEmpty()) {
+                    return;
+                }
+
+                keyMessageMap.put(subjectArea, messagesToBroadcast);
+
+                lastIDMap.put(subjectArea,
+                        Integer.valueOf(messagesToBroadcast.get(messagesToBroadcast.size() - 1).getId()));
+            } catch (IOException e) {
+                // FIXME: 07/03/2017 Error Handling
+                e.printStackTrace();
             }
+        });
 
-        } catch (IOException e) {
-            // FIXME: 07/03/2017 Error Handling
-            e.printStackTrace();
+        if (!keyMessageMap.isEmpty()) {
+            logger.info("Found new messages, broadcasting them");
+            infosysBot.update(keyMessageMap);
         }
     }
 
-    private List<InfosysMessageBean> getMessages() throws IOException {
-        final String url = BASE_URL + SUBJECT_AREA + "/" + this.lastMessageID;
+    private List<InfosysMessageBean> getMessages(SubjectArea subjectArea) throws IOException {
+        final String url = BASE_URL + subjectArea.getHostkey() + "/" + lastIDMap.get(subjectArea);
         HttpGet httpget = new HttpGet(url);
         httpget.setHeader("http.protocol.content-charset", "UTF-8");
 

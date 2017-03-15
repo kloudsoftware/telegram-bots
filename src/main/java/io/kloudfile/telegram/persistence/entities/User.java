@@ -50,7 +50,7 @@ public class User implements Serializable {
     @Size(max = 45)
     @Column(name = "lastname")
     private String lastname;
-    @ManyToMany(mappedBy = "userList")
+    @ManyToMany(mappedBy = "userList", fetch = FetchType.EAGER)
     private List<SubjectArea> subjectAreaList;
 
     public User() {

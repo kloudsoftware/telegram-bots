@@ -4,6 +4,7 @@ import io.kloudfile.telegram.bot.BotContainer;
 import io.kloudfile.telegram.bot.dto.infosys.callbackDTO.ResponseDTO;
 import io.kloudfile.telegram.bot.query.Query;
 import io.kloudfile.telegram.infosys.InfosysMessageBean;
+import io.kloudfile.telegram.persistence.entities.SubjectArea;
 import io.kloudfile.telegram.persistence.entities.User;
 import io.kloudfile.telegram.persistence.repos.SubjectAreaRepository;
 import io.kloudfile.telegram.persistence.repos.UserRepository;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @Component
 public class InfosysBot extends AbsBot {
@@ -33,25 +34,32 @@ public class InfosysBot extends AbsBot {
         this.userRepository = userRepository;
     }
 
-    public void update(List<InfosysMessageBean> messages) {
+    public void update(Map<SubjectArea, List<InfosysMessageBean>> subjectAreaListMap) {
         StringBuilder messageBuilder = new StringBuilder();
 
-        if (messages.size() == 1) {
-            messageBuilder.append("Neue Infosys Nachricht:").append("\n").append("\n");
-            messageBuilder.append(buildMsg(messages.get(0)));
-        } else {
-            messageBuilder.append("Neue Infosys Nachrichten:").append("\n").append("\n");
-            for (InfosysMessageBean messageBean : messages) {
-                messageBuilder.append(buildMsg(messageBean));
+        final List<User> users = userRepository.findAll();
+
+        users.forEach(user -> user.getSubjectAreaList().forEach(subjectArea -> {
+
+            final List<InfosysMessageBean> messages = subjectAreaListMap.get(subjectArea);
+
+            if (null == messages) {
+                return;
             }
-        }
 
-        String message = messageBuilder.toString();
+            if (messages.size() == 1) {
+                messageBuilder.append("Neue Infosys Nachricht:").append("\n").append("\n");
+                messageBuilder.append(buildMsg(messages.get(0)));
+            } else {
+                messageBuilder.append("Neue Infosys Nachrichten:").append("\n").append("\n");
+                for (InfosysMessageBean messageBean : messages) {
+                    messageBuilder.append(buildMsg(messageBean));
+                }
+            }
 
-        List<Integer> chatIdList = userRepository.findAll().stream().map(User::getChatId).collect(Collectors.toList());
-        for (Integer chatID : chatIdList) {
-            Query.sendMessage(this, chatID, message);
-        }
+            Query.sendMessage(this, user.getChatId(), messageBuilder.toString());
+        }));
+
 
     }
 
