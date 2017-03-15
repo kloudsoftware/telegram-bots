@@ -35,7 +35,6 @@ public class InfosysBot extends AbsBot {
     }
 
     public void update(Map<SubjectArea, List<InfosysMessageBean>> subjectAreaListMap) {
-        StringBuilder messageBuilder = new StringBuilder();
 
         final List<User> users = userRepository.findAll();
 
@@ -46,6 +45,7 @@ public class InfosysBot extends AbsBot {
             if (null == messages) {
                 return;
             }
+            StringBuilder messageBuilder = new StringBuilder();
 
             if (messages.size() == 1) {
                 messageBuilder.append("Neue Infosys Nachricht:").append("\n").append("\n");

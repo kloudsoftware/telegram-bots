@@ -17,11 +17,15 @@ import java.util.*;
 
 @Component
 public final class InfosysQuery {
+    private final int LAST_TIMESTAMP_NOT_SET = -1;
+
+
     private final CloseableHttpClient closeableHttpClient;
     private String BASE_URL;
     private static final String SUBJECT_AREA = "%23SPLUSD82745";
     private Map<SubjectArea, Integer> lastIDMap = new HashMap<>();
     private final InfosysParser parser = new InfosysParser();
+    private long lastMessageTimestamp = LAST_TIMESTAMP_NOT_SET;
 
     @Autowired
     private InfosysBot infosysBot;
@@ -48,7 +52,8 @@ public final class InfosysQuery {
     @Scheduled(fixedRate = 300000)
     public void run() {
 
-        final long startTimeStamp = System.currentTimeMillis() / 1000;
+        final long startTimeStamp = lastMessageTimestamp == LAST_TIMESTAMP_NOT_SET ?
+                System.currentTimeMillis() / 1000 : lastMessageTimestamp;
 
         final Map<SubjectArea, List<InfosysMessageBean>> keyMessageMap = new HashMap<>();
 
@@ -76,6 +81,8 @@ public final class InfosysQuery {
 
                 lastIDMap.put(subjectArea,
                         Integer.valueOf(messagesToBroadcast.get(messagesToBroadcast.size() - 1).getId()));
+
+                lastMessageTimestamp = Math.max(lastDate, lastMessageTimestamp);
             } catch (IOException e) {
                 // FIXME: 07/03/2017 Error Handling
                 e.printStackTrace();
