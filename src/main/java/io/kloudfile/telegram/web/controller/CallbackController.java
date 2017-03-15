@@ -6,7 +6,6 @@ import io.kloudfile.telegram.bot.bots.Bot;
 import io.kloudfile.telegram.bot.dto.infosys.callbackDTO.ResponseDTO;
 import io.kloudfile.telegram.persistence.entities.User;
 import io.kloudfile.telegram.persistence.repos.UserRepository;
-import io.kloudfile.telegram.persistence.services.FileService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 @Controller
@@ -26,9 +26,6 @@ public class CallbackController {
     private final Gson GSON = new Gson();
 
     private final Logger logger = Logger.getLogger(this.getClass());
-
-    @Autowired
-    private FileService fileService;
 
     @Autowired
     private UserRepository userRepository;
@@ -49,6 +46,7 @@ public class CallbackController {
         final String firstName = res.getMessage().getFrom().getFirstName();
         final String lastName = res.getMessage().getFrom().getLastName();
 
+        boolean isGroup = chatID < 0;
         Optional<User> foundUser = userRepository.findByChatId(chatID);
 
         if (!foundUser.isPresent()) {
@@ -64,6 +62,14 @@ public class CallbackController {
                 user.setLastname(lastName);
             }
 
+            userRepository.save(user);
+        }
+
+        if (!isGroup && foundUser.isPresent() && hasChanged(foundUser.get(), firstName, lastName, username)) {
+            User user = foundUser.get();
+            user.setFirstname(firstName);
+            user.setLastname(lastName);
+            user.setUsername(username);
             userRepository.save(user);
         }
 
@@ -83,6 +89,12 @@ public class CallbackController {
 
 
         return ResponseEntity.ok().build();
+    }
+
+    private boolean hasChanged(User user, String firstName, String lastName, String username) {
+        return !Objects.equals(user.getFirstname(), firstName) ||
+                !Objects.equals(user.getLastname(), lastName) ||
+                !Objects.equals(user.getUsername(), username);
     }
 
 
