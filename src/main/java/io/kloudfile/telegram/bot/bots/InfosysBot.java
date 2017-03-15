@@ -85,18 +85,22 @@ public class InfosysBot extends AbsBot {
     }
 
     private void addSubjectArea(String targetSubject, ResponseDTO responseDTO) {
-        userRepository.findByChatId(responseDTO.getMessage().getChat().getId()).ifPresent(user ->
+        final Integer chatID = responseDTO.getMessage().getChat().getId();
+        userRepository.findByChatId(chatID).ifPresent(user ->
                 subjectAreaRepository.findByName(targetSubject).ifPresent(subjectArea -> {
                     user.addSubjectArea(subjectArea);
                     userRepository.flush();
+                    Query.sendMessage(this, chatID, "Fachbereich " + targetSubject + " hinzugefügt");
                 }));
     }
 
     private void removeSubjectArea(String targetSubject, ResponseDTO responseDTO) {
+        final Integer chatID = responseDTO.getMessage().getChat().getId();
         userRepository.findByChatId(responseDTO.getMessage().getChat().getId()).ifPresent(user ->
                 subjectAreaRepository.findByName(targetSubject).ifPresent(subjectArea -> {
                     user.removeSubjectArea(subjectArea);
                     userRepository.flush();
+                    Query.sendMessage(this, chatID, "Fachbereich " + targetSubject + " gelöscht");
                 }));
     }
 
