@@ -56,9 +56,9 @@ CREATE TABLE IF NOT EXISTS `telegramdb`.`subject_area` (
 
 
 -- -----------------------------------------------------
--- Table `telegramdb`.`user_subject_area`
+-- Table `telegramdb`.`user_has_subject_area`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `telegramdb`.`user_subject_area` (
+CREATE TABLE IF NOT EXISTS `telegramdb`.`user_has_subject_area` (
   `user_id` INT NOT NULL,
   `subject_area_id` INT NOT NULL,
   PRIMARY KEY (`user_id`, `subject_area_id`),

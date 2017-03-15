@@ -22,10 +22,10 @@ import java.util.List;
 @XmlRootElement
 /*
 @NamedQueries({
-    @NamedQuery(name = "SubjectAreaRepository.findAll", query = "SELECT s FROM SubjectAreaRepository s"),
-    @NamedQuery(name = "SubjectAreaRepository.findById", query = "SELECT s FROM SubjectAreaRepository s WHERE s.id = :id"),
-    @NamedQuery(name = "SubjectAreaRepository.findByName", query = "SELECT s FROM SubjectAreaRepository s WHERE s.name = :name"),
-    @NamedQuery(name = "SubjectAreaRepository.findByHostkey", query = "SELECT s FROM SubjectAreaRepository s WHERE s.hostkey = :hostkey")})
+    @NamedQuery(name = "SubjectArea.findAll", query = "SELECT s FROM SubjectArea s"),
+    @NamedQuery(name = "SubjectArea.findById", query = "SELECT s FROM SubjectArea s WHERE s.id = :id"),
+    @NamedQuery(name = "SubjectArea.findByName", query = "SELECT s FROM SubjectArea s WHERE s.name = :name"),
+    @NamedQuery(name = "SubjectArea.findByHostkey", query = "SELECT s FROM SubjectArea s WHERE s.hostkey = :hostkey")})
 */
 public class SubjectArea implements Serializable {
 
@@ -45,10 +45,10 @@ public class SubjectArea implements Serializable {
     @Size(min = 1, max = 45)
     @Column(name = "hostkey")
     private String hostkey;
-    @JoinTable(name = "user_subject_area", joinColumns = {
-        @JoinColumn(name = "user_id", referencedColumnName = "id")}, inverseJoinColumns = {
-        @JoinColumn(name = "subject_area_id", referencedColumnName = "id")})
-    @ManyToMany()
+    @JoinTable(name = "user_has_subject_area", joinColumns = {
+        @JoinColumn(name = "subject_area_id", referencedColumnName = "id")}, inverseJoinColumns = {
+        @JoinColumn(name = "user_id", referencedColumnName = "id")})
+    @ManyToMany
     private List<User> userList;
 
     public SubjectArea() {
@@ -119,13 +119,20 @@ public class SubjectArea implements Serializable {
 
     @Override
     public String toString() {
-        return "test.SubjectAreaRepository[ id=" + id + " ]";
+        return "test.SubjectArea[ id=" + id + " ]";
     }
 
     public void addUser(User user) {
         if (!userList.contains(user)) {
             this.userList.add(user);
             user.addSubjectArea(this);
+        }
+    }
+
+    public void removeUser(User user) {
+        if (userList.contains(user)) {
+            userList.remove(user);
+            user.removeSubjectArea(this);
         }
     }
 }

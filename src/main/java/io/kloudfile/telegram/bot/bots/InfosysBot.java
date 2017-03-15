@@ -4,7 +4,6 @@ import io.kloudfile.telegram.bot.BotContainer;
 import io.kloudfile.telegram.bot.dto.infosys.callbackDTO.ResponseDTO;
 import io.kloudfile.telegram.bot.query.Query;
 import io.kloudfile.telegram.infosys.InfosysMessageBean;
-import io.kloudfile.telegram.persistence.entities.SubjectArea;
 import io.kloudfile.telegram.persistence.entities.User;
 import io.kloudfile.telegram.persistence.repos.SubjectAreaRepository;
 import io.kloudfile.telegram.persistence.repos.UserRepository;
@@ -71,7 +70,7 @@ public class InfosysBot extends AbsBot {
         }
 
         if (command.equalsIgnoreCase("removesubject")) {
-            removeubjectArea(joinArguments(args), responseDTO);
+            removeSubjectArea(joinArguments(args), responseDTO);
         }
     }
 
@@ -93,17 +92,12 @@ public class InfosysBot extends AbsBot {
                 }));
     }
 
-    private void removeubjectArea(String targetSubject, ResponseDTO responseDTO) {
-        userRepository.findByChatId(responseDTO.getMessage().getChat().getId()).ifPresent(user -> {
-            subjectAreaRepository.findByName(targetSubject).ifPresent(subjectArea -> {
-                final List<SubjectArea> subjectAreaList = user.getSubjectAreaList();
-                if (subjectAreaList.contains(subjectArea)) {
-                    subjectAreaList.add(subjectArea);
-                    user.setSubjectAreaList(subjectAreaList);
-                    userRepository.save(user);
-                }
-            });
-        });
+    private void removeSubjectArea(String targetSubject, ResponseDTO responseDTO) {
+        userRepository.findByChatId(responseDTO.getMessage().getChat().getId()).ifPresent(user ->
+                subjectAreaRepository.findByName(targetSubject).ifPresent(subjectArea -> {
+                    user.removeSubjectArea(subjectArea);
+                    userRepository.flush();
+                }));
     }
 
     private String buildMsg(InfosysMessageBean messageBean) {

@@ -41,7 +41,6 @@ public class User implements Serializable {
     @NotNull
     @Column(name = "chat_id")
     private int chatId;
-    @Basic(optional = false)
     @Size(max = 45)
     @Column(name = "username")
     private String username;
@@ -61,10 +60,9 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Integer id, int chatId, String username) {
+    public User(Integer id, int chatId) {
         this.id = id;
         this.chatId = chatId;
-        this.username = username;
     }
 
     public Integer getId() {
@@ -147,5 +145,11 @@ public class User implements Serializable {
             subjectArea.addUser(this);
         }
     }
-    
+
+    public void removeSubjectArea(SubjectArea subjectArea) {
+        if (subjectAreaList.contains(subjectArea)) {
+            this.subjectAreaList.remove(subjectArea);
+            subjectArea.removeUser(this);
+        }
+    }
 }
