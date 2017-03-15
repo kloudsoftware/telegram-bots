@@ -80,6 +80,36 @@ public class InfosysBot extends AbsBot {
         if (command.equalsIgnoreCase("removesubject")) {
             removeSubjectArea(joinArguments(args), responseDTO);
         }
+
+        if (command.equalsIgnoreCase("help")) {
+            sendHelp(responseDTO);
+        }
+    }
+
+    private void sendHelp(ResponseDTO responseDTO) {
+        final StringBuilder messageBuilder = new StringBuilder();
+
+        messageBuilder.append("Hallo, ich bin HEL9000, ich versende Infosysnachrichten in Telegram-Chats.");
+        messageBuilder.append('\n');
+
+        messageBuilder.append("Ich unterstütze folgende Fachbereiche:");
+        messageBuilder.append('\n');
+
+        subjectAreaRepository.findAll().forEach(subjectArea -> {
+            messageBuilder.append('\n');
+            messageBuilder.append(subjectArea.getName());
+        });
+        messageBuilder.append('\n');
+        messageBuilder.append('\n');
+        messageBuilder.append("Zum hinzufügen von einem Fachbereich, schreibe: /addFachbereich NAME");
+        messageBuilder.append('\n');
+        messageBuilder.append("Zum löschen von einem Fachbereich, schreibe: /removeFachbereich NAME");
+
+        messageBuilder.append('\n');
+        messageBuilder.append("Für weitere Informationen schreibe: /aboutInfoHEL");
+
+        Query.sendMessage(this, responseDTO.getMessage().getChat().getId(), messageBuilder.toString());
+
     }
 
     private String joinArguments(List<String> arguments) {
