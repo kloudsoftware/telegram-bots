@@ -91,34 +91,7 @@ public class InfosysBot extends AbsBot {
 
     @Override
     public void sendInfo(ResponseDTO responseDTO) {
-        final StringBuilder messageBuilder = new StringBuilder();
-
-        messageBuilder.append("Hallo, ich bin HEL9000, ich versende Infosysnachrichten in Telegram-Chats.");
-        messageBuilder.append('\n');
-
-        messageBuilder.append("Ich unterstütze folgende Fachbereiche:");
-        messageBuilder.append('\n');
-
-        subjectAreaRepository.findAll().forEach(subjectArea -> {
-            messageBuilder.append('\n');
-            messageBuilder.append(subjectArea.getName());
-        });
-
-        messageBuilder.append('\n');
-        messageBuilder.append('\n');
-        messageBuilder.append("Zum hinzufügen von einem Fachbereich, schreibe: /addFachbereich NAME");
-        messageBuilder.append('\n');
-        messageBuilder.append("Zum löschen von einem Fachbereich, schreibe: /removeFachbereich NAME");
-
-        messageBuilder.append('\n');
-        messageBuilder.append("Für weitere Informationen schreibe: /aboutInfoHEL");
-
-        for (User user : userRepository.findAll()) {
-            Query.sendMessage(this, user.getChatId(), messageBuilder.toString());
-        }
-
-
-        //sendHelp(responseDTO);
+        sendHelp(responseDTO);
     }
 
     private void sendHelp(ResponseDTO responseDTO) {

@@ -69,9 +69,5 @@ public class SubjectAreaController {
             e.printStackTrace();
         }
 
-        for (Bot bot : BotContainer.getInstance().getBotList()) {
-            bot.sendInfo(null);
-        }
-
     }
 }
