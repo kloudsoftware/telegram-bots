@@ -114,7 +114,7 @@ public class InfosysBot extends AbsBot {
         messageBuilder.append("Für weitere Informationen schreibe: /aboutInfoHEL");
 
         for (User user : userRepository.findAll()) {
-            Query.sendMessage(this, user.getId(), messageBuilder.toString());
+            Query.sendMessage(this, user.getChatId(), messageBuilder.toString());
         }
 
 
