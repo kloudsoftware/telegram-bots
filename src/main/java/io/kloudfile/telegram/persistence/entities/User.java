@@ -152,4 +152,8 @@ public class User implements Serializable {
             subjectArea.removeUser(this);
         }
     }
+
+    public boolean hasSubscribed(SubjectArea subjectArea) {
+        return this.subjectAreaList.contains(subjectArea);
+    }
 }

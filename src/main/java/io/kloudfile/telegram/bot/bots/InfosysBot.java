@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class InfosysBot extends AbsBot {
@@ -73,12 +74,8 @@ public class InfosysBot extends AbsBot {
             Query.sendMessage(this, responseDTO.getMessage().getChat().getId(), "Hallo");
         }
 
-        if (command.equalsIgnoreCase("addsubject")) {
-            addSubjectArea(joinArguments(args), responseDTO);
-        }
-
-        if (command.equalsIgnoreCase("removesubject")) {
-            removeSubjectArea(joinArguments(args), responseDTO);
+        if (command.contains("Subject")) {
+            handelSubjectAreaCommand(command, joinArguments(args), responseDTO);
         }
 
         if (command.equalsIgnoreCase("help")) {
@@ -122,25 +119,56 @@ public class InfosysBot extends AbsBot {
         return joinedArguments.trim();
     }
 
-    private void addSubjectArea(String targetSubject, ResponseDTO responseDTO) {
-        final Integer chatID = responseDTO.getMessage().getChat().getId();
-        userRepository.findByChatId(chatID).ifPresent(user ->
-                subjectAreaRepository.findByName(targetSubject).ifPresent(subjectArea -> {
-                    user.addSubjectArea(subjectArea);
-                    userRepository.flush();
-                    Query.sendMessage(this, chatID, "Fachbereich " + targetSubject + " hinzugefügt");
-                }));
+    private void handelSubjectAreaCommand(String command, String targetSubject, ResponseDTO responseDTO) {
+        final int chatid = responseDTO.getMessage().getChat().getId();
+
+        final Optional<User> userOptional = userRepository.findByChatId(chatid);
+
+        if (!userOptional.isPresent()) {
+            Query.sendMessage(this, chatid, "Ein Fehler ist aufgetreten");
+            return;
+        }
+
+        final User user = userOptional.get();
+
+        final Optional<SubjectArea> subjectAreaOptional = subjectAreaRepository.findByName(targetSubject);
+
+        if (!subjectAreaOptional.isPresent()) {
+            Query.sendMessage(this, chatid, "Fachbereich konnte nicht gefunden werden");
+            return;
+        }
+
+        final SubjectArea subjectArea = subjectAreaOptional.get();
+
+        if (command.equalsIgnoreCase("addSubject")) {
+            addSubjectArea(targetSubject, chatid, user, subjectArea);
+            return;
+        }
+
+        removeSubjectArea(targetSubject, chatid, user, subjectArea);
+
     }
 
-    private void removeSubjectArea(String targetSubject, ResponseDTO responseDTO) {
-        final Integer chatID = responseDTO.getMessage().getChat().getId();
-        userRepository.findByChatId(responseDTO.getMessage().getChat().getId()).ifPresent(user ->
-                subjectAreaRepository.findByName(targetSubject).ifPresent(subjectArea -> {
-                    user.removeSubjectArea(subjectArea);
-                    userRepository.flush();
-                    Query.sendMessage(this, chatID, "Fachbereich " + targetSubject + " gelöscht");
-                }));
+    private void removeSubjectArea(String targetSubject, int chatid, User user, SubjectArea subjectArea) {
+        if (!user.hasSubscribed(subjectArea)) {
+            Query.sendMessage(this, chatid, "Fachbereich " + targetSubject + " ist nicht abboniert");
+            return;
+        }
+        user.removeSubjectArea(subjectArea);
+        userRepository.save(user);
+        Query.sendMessage(this, chatid, "Fachbereich " + targetSubject + " gelöscht");
     }
+
+    private void addSubjectArea(String targetSubject, int chatid, User user, SubjectArea subjectArea) {
+        if (user.hasSubscribed(subjectArea)) {
+            Query.sendMessage(this, chatid, "Fachbereich " + targetSubject + " ist bereits abboniert");
+            return;
+        }
+        user.addSubjectArea(subjectArea);
+        userRepository.save(user);
+        Query.sendMessage(this, chatid, "Fachbereich " + targetSubject + " abboniert");
+    }
+
 
     private String buildMsg(InfosysMessageBean messageBean) {
         StringBuilder msgBuilder = new StringBuilder();
