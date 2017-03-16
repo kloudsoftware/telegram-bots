@@ -21,9 +21,6 @@ import java.util.Optional;
 @Component
 public class InfosysBot extends AbsBot {
 
-    private final String key;
-
-    private final UserRepository userRepository;
 
     @Autowired
     private SubjectAreaRepository subjectAreaRepository;
@@ -32,7 +29,6 @@ public class InfosysBot extends AbsBot {
     public InfosysBot(Environment env, UserRepository userRepository) {
         this.key = env.getProperty("infosys.bot.key");
         BotContainer.getInstance().register(this);
-        this.userRepository = userRepository;
     }
 
     public void update(Map<SubjectArea, List<InfosysMessageBean>> subjectAreaListMap) {
@@ -71,7 +67,17 @@ public class InfosysBot extends AbsBot {
     @Override
     public void exec(String command, List<String> args, ResponseDTO responseDTO) {
         if (command.equalsIgnoreCase("hello")) {
-            Query.sendMessage(this, responseDTO.getMessage().getChat().getId(), "Hallo");
+            Query.sendMessage(this, responseDTO.getMessage().getChat().getId(),
+                   "Hallo " + (responseDTO.getMessage().getFrom().getUsername()
+                           != null ? responseDTO.getMessage().getFrom().getUsername(): ""));
+        }
+
+        if(command.equalsIgnoreCase("aboutInfoHEL")) {
+            String msg = "Hallo, ich bin HEL9000, ich versende Infosysnachrichten in Telegram-Chats.";
+            msg += "\n Mein Sourcecode liegt auf github: https://github.com/probE466/telegram-bots.";
+            msg += "\n\n Ich werde von @probE466 und @fr3d63 entwickelt.";
+
+            Query.sendMessage(this, responseDTO.getMessage().getChat().getId(), msg);
         }
 
         if (command.contains("Subject")) {
