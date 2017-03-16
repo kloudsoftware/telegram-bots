@@ -22,7 +22,6 @@ public final class InfosysQuery {
 
     private final CloseableHttpClient closeableHttpClient;
     private String BASE_URL;
-    private static final String SUBJECT_AREA = "%23SPLUSD82745";
     private Map<SubjectArea, Integer> lastIDMap = new HashMap<>();
     private final InfosysParser parser = new InfosysParser();
     private long lastMessageTimestamp = LAST_TIMESTAMP_NOT_SET;
@@ -84,7 +83,6 @@ public final class InfosysQuery {
 
                 lastMessageTimestamp = Math.max(lastDate, lastMessageTimestamp);
             } catch (IOException e) {
-                // FIXME: 07/03/2017 Error Handling
                 e.printStackTrace();
             }
         });
