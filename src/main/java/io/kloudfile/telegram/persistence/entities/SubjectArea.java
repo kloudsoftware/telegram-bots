@@ -45,10 +45,10 @@ public class SubjectArea implements Serializable {
     @Size(min = 1, max = 45)
     @Column(name = "hostkey")
     private String hostkey;
-    @JoinTable(name = "user_subject_area", joinColumns = {
+    @JoinTable(name = "user_has_subject_area", joinColumns = {
         @JoinColumn(name = "subject_area_id", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "user_id", referencedColumnName = "id")})
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<User> userList;
 
     public SubjectArea() {
@@ -121,5 +121,18 @@ public class SubjectArea implements Serializable {
     public String toString() {
         return "test.SubjectArea[ id=" + id + " ]";
     }
-    
+
+    public void addUser(User user) {
+        if (!userList.contains(user)) {
+            this.userList.add(user);
+            user.addSubjectArea(this);
+        }
+    }
+
+    public void removeUser(User user) {
+        if (userList.contains(user)) {
+            userList.remove(user);
+            user.removeSubjectArea(this);
+        }
+    }
 }
