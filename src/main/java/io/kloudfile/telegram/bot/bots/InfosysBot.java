@@ -8,6 +8,7 @@ import io.kloudfile.telegram.persistence.entities.SubjectArea;
 import io.kloudfile.telegram.persistence.entities.User;
 import io.kloudfile.telegram.persistence.repos.SubjectAreaRepository;
 import io.kloudfile.telegram.persistence.repos.UserRepository;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,8 @@ public class InfosysBot extends AbsBot {
 
     @Autowired
     private SubjectAreaRepository subjectAreaRepository;
+
+    Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
     public InfosysBot(Environment env, UserRepository userRepository) {
@@ -42,6 +45,8 @@ public class InfosysBot extends AbsBot {
             if (null == messages) {
                 return;
             }
+
+            logger.info(messages.size());
             StringBuilder messageBuilder = new StringBuilder();
 
             if (messages.size() == 1) {
