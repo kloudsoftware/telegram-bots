@@ -47,7 +47,7 @@ public final class InfosysQuery {
         subjectAreas.forEach(subjectArea -> lastIDMap.put(subjectArea, 0));
     }
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 300000)
     public void run() {
         logger.info("Run infosys query");
 
