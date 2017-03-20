@@ -43,11 +43,9 @@ public class InfosysBot extends AbsBot {
             final List<InfosysMessageBean> messages = subjectAreaListMap.get(subjectArea);
 
             if (null == messages) {
-                logger.error("messages list is null");
                 return;
             }
 
-            logger.info(messages.size());
             StringBuilder messageBuilder = new StringBuilder();
 
             if (messages.size() == 1) {
