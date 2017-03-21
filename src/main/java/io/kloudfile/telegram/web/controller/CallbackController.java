@@ -63,6 +63,9 @@ public class CallbackController {
             }
 
             userRepository.save(user);
+            for (Bot bot : BotContainer.getInstance().getBotList()) {
+                bot.sendInfo(res);
+            }
         }
 
         if (!isGroup && foundUser.isPresent() && hasChanged(foundUser.get(), firstName, lastName, username)) {

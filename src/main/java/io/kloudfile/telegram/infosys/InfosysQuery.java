@@ -17,14 +17,12 @@ import java.util.*;
 
 @Component
 public final class InfosysQuery {
-    private final int LAST_TIMESTAMP_NOT_SET = -1;
-
 
     private final CloseableHttpClient closeableHttpClient;
     private String BASE_URL;
     private static final String SUBJECT_AREA = "%23SPLUSD82745";
     private final InfosysParser parser = new InfosysParser();
-    private long lastMessageTimestamp = LAST_TIMESTAMP_NOT_SET;
+    private long lastMessageTimestamp = System.currentTimeMillis() / 1000;
 
     @Autowired
     private InfosysBot infosysBot;
@@ -49,25 +47,20 @@ public final class InfosysQuery {
 
     @Scheduled(fixedRate = 300000)
     public void run() {
-
-        final long startTimeStamp = lastMessageTimestamp == LAST_TIMESTAMP_NOT_SET ?
-                System.currentTimeMillis() / 1000 : lastMessageTimestamp;
+        logger.info("Run infosys query");
 
         final Map<SubjectArea, List<InfosysMessageBean>> keyMessageMap = new HashMap<>();
 
         subjectAreas.forEach(subjectArea -> {
             try {
-                long lastDate = startTimeStamp;
-
                 List<InfosysMessageBean> messagesBuffer = reverseList(getMessages(subjectArea));
 
                 final List<InfosysMessageBean> messagesToBroadcast = new ArrayList<>();
 
                 for (InfosysMessageBean messageCandidate : messagesBuffer) {
                     final long candidateDate = messageCandidate.getCreated();
-                    if (candidateDate > lastDate) {
+                    if (candidateDate > lastMessageTimestamp) {
                         messagesToBroadcast.add(messageCandidate);
-                        lastDate = candidateDate;
                     }
                 }
 
@@ -77,13 +70,13 @@ public final class InfosysQuery {
 
                 keyMessageMap.put(subjectArea, messagesToBroadcast);
 
-                lastMessageTimestamp = Math.max(lastDate, lastMessageTimestamp);
             } catch (IOException e) {
                 // FIXME: 07/03/2017 Error Handling
                 e.printStackTrace();
             }
         });
 
+        lastMessageTimestamp = System.currentTimeMillis() / 1000;
         if (!keyMessageMap.isEmpty()) {
             logger.info("Found new messages, broadcasting them");
             infosysBot.update(keyMessageMap);

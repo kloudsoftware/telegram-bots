@@ -2,6 +2,8 @@ package io.kloudfile.telegram.web.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import io.kloudfile.telegram.bot.BotContainer;
+import io.kloudfile.telegram.bot.bots.Bot;
 import io.kloudfile.telegram.infosys.SubjectAreaDTO;
 import io.kloudfile.telegram.persistence.entities.SubjectArea;
 import io.kloudfile.telegram.persistence.repos.SubjectAreaRepository;

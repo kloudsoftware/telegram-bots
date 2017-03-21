@@ -12,4 +12,6 @@ public interface Bot {
     String getBotToken();
 
     void exec(String command, List<String> args, ResponseDTO responseDTO);
+
+    void sendInfo(ResponseDTO responseDTO);
 }

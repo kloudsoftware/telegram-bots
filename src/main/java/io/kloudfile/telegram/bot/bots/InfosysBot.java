@@ -8,6 +8,7 @@ import io.kloudfile.telegram.persistence.entities.SubjectArea;
 import io.kloudfile.telegram.persistence.entities.User;
 import io.kloudfile.telegram.persistence.repos.SubjectAreaRepository;
 import io.kloudfile.telegram.persistence.repos.UserRepository;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,8 @@ public class InfosysBot extends AbsBot {
 
     @Autowired
     private SubjectAreaRepository subjectAreaRepository;
+
+    Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
     public InfosysBot(Environment env, UserRepository userRepository) {
@@ -42,6 +45,7 @@ public class InfosysBot extends AbsBot {
             if (null == messages) {
                 return;
             }
+
             StringBuilder messageBuilder = new StringBuilder();
 
             if (messages.size() == 1) {
@@ -74,8 +78,9 @@ public class InfosysBot extends AbsBot {
 
         if(command.equalsIgnoreCase("aboutInfoHEL")) {
             String msg = "Hallo, ich bin HEL9000, ich versende Infosysnachrichten in Telegram-Chats.";
-            msg += "\n Mein Sourcecode liegt auf github: https://github.com/probE466/telegram-bots.";
-            msg += "\n\n Ich werde von @probE466 und @fr3d63 entwickelt.";
+            msg += "\nMein Sourcecode liegt auf github: https://github.com/probE466/telegram-bots.";
+            msg += "\n\nIch werde von @probE466 und @fr3d63 entwickelt.";
+            msg += "\n\nUm Fachbereiche zu abbonieren bitte /help verwenden.";
 
             Query.sendMessage(this, responseDTO.getMessage().getChat().getId(), msg);
         }
@@ -87,6 +92,11 @@ public class InfosysBot extends AbsBot {
         if (command.equalsIgnoreCase("help")) {
             sendHelp(responseDTO);
         }
+    }
+
+    @Override
+    public void sendInfo(ResponseDTO responseDTO) {
+        sendHelp(responseDTO);
     }
 
     private void sendHelp(ResponseDTO responseDTO) {
@@ -102,11 +112,12 @@ public class InfosysBot extends AbsBot {
             messageBuilder.append('\n');
             messageBuilder.append(subjectArea.getName());
         });
+
         messageBuilder.append('\n');
         messageBuilder.append('\n');
-        messageBuilder.append("Zum hinzufügen von einem Fachbereich, schreibe: /addFachbereich NAME");
+        messageBuilder.append("Zum hinzufügen von einem Fachbereich, schreibe: /addSubject NAME");
         messageBuilder.append('\n');
-        messageBuilder.append("Zum löschen von einem Fachbereich, schreibe: /removeFachbereich NAME");
+        messageBuilder.append("Zum löschen von einem Fachbereich, schreibe: /removeSubject NAME");
 
         messageBuilder.append('\n');
         messageBuilder.append("Für weitere Informationen schreibe: /aboutInfoHEL");
