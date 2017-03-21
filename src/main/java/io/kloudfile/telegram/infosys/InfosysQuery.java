@@ -20,7 +20,6 @@ public final class InfosysQuery {
 
     private final CloseableHttpClient closeableHttpClient;
     private String BASE_URL;
-    private static final String SUBJECT_AREA = "%23SPLUSD82745";
     private final InfosysParser parser = new InfosysParser();
     private long lastMessageTimestamp = System.currentTimeMillis() / 1000;
 
