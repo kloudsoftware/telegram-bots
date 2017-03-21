@@ -23,7 +23,6 @@ public final class InfosysQuery {
     private final CloseableHttpClient closeableHttpClient;
     private String BASE_URL;
     private static final String SUBJECT_AREA = "%23SPLUSD82745";
-    private Map<SubjectArea, Integer> lastIDMap = new HashMap<>();
     private final InfosysParser parser = new InfosysParser();
     private long lastMessageTimestamp = LAST_TIMESTAMP_NOT_SET;
 
@@ -46,7 +45,6 @@ public final class InfosysQuery {
 
         subjectAreas = subjectAreaRepository.findAll();
 
-        subjectAreas.forEach(subjectArea -> lastIDMap.put(subjectArea, 0));
     }
 
     @Scheduled(fixedRate = 300000)
@@ -79,9 +77,6 @@ public final class InfosysQuery {
 
                 keyMessageMap.put(subjectArea, messagesToBroadcast);
 
-                lastIDMap.put(subjectArea,
-                        Integer.valueOf(messagesToBroadcast.get(messagesToBroadcast.size() - 1).getId()));
-
                 lastMessageTimestamp = Math.max(lastDate, lastMessageTimestamp);
             } catch (IOException e) {
                 // FIXME: 07/03/2017 Error Handling
@@ -96,7 +91,7 @@ public final class InfosysQuery {
     }
 
     private List<InfosysMessageBean> getMessages(SubjectArea subjectArea) throws IOException {
-        final String url = BASE_URL + subjectArea.getHostkey() + "/" + lastIDMap.get(subjectArea);
+        final String url = BASE_URL + subjectArea.getHostkey() + "/0";
         HttpGet httpget = new HttpGet(url);
         httpget.setHeader("http.protocol.content-charset", "UTF-8");
 
