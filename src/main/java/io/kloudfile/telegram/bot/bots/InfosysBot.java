@@ -38,28 +38,29 @@ public class InfosysBot extends AbsBot {
 
         final List<User> users = userRepository.findAll();
 
-        users.forEach(user -> user.getSubjectAreaList().forEach(subjectArea -> {
+        for (User user : users) {
+            for (SubjectArea subjectArea : user.getSubjectAreaList()) {
+                final List<InfosysMessageBean> messages = subjectAreaListMap.get(subjectArea);
 
-            final List<InfosysMessageBean> messages = subjectAreaListMap.get(subjectArea);
-
-            if (null == messages) {
-                return;
-            }
-
-            StringBuilder messageBuilder = new StringBuilder();
-
-            if (messages.size() == 1) {
-                messageBuilder.append("Neue Infosys Nachricht:").append("\n").append("\n");
-                messageBuilder.append(buildMsg(messages.get(0)));
-            } else {
-                messageBuilder.append("Neue Infosys Nachrichten:").append("\n").append("\n");
-                for (InfosysMessageBean messageBean : messages) {
-                    messageBuilder.append(buildMsg(messageBean));
+                if (null == messages) {
+                    continue;
                 }
-            }
 
-            Query.sendMessage(this, user.getChatId(), messageBuilder.toString());
-        }));
+                StringBuilder messageBuilder = new StringBuilder();
+
+                if (messages.size() == 1) {
+                    messageBuilder.append("Neue Infosys Nachricht:").append("\n").append("\n");
+                    messageBuilder.append(buildMsg(messages.get(0)));
+                } else {
+                    messageBuilder.append("Neue Infosys Nachrichten:").append("\n").append("\n");
+                    for (InfosysMessageBean messageBean : messages) {
+                        messageBuilder.append(buildMsg(messageBean));
+                    }
+                }
+
+                Query.sendMessage(this, user.getChatId(), messageBuilder.toString());
+            }
+        }
 
 
     }

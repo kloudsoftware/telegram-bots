@@ -50,9 +50,9 @@ public final class InfosysQuery {
 
         final Map<SubjectArea, List<InfosysMessageBean>> keyMessageMap = new HashMap<>();
 
-        subjectAreas.forEach(subjectArea -> {
+        for (SubjectArea subjectArea : subjectAreas) {
             try {
-                List<InfosysMessageBean> messagesBuffer = reverseList(getMessages(subjectArea));
+                List<InfosysMessageBean> messagesBuffer = getMessages(subjectArea);
 
                 final List<InfosysMessageBean> messagesToBroadcast = new ArrayList<>();
 
@@ -64,7 +64,7 @@ public final class InfosysQuery {
                 }
 
                 if (messagesToBroadcast.isEmpty()) {
-                    return;
+                    continue;
                 }
 
                 keyMessageMap.put(subjectArea, messagesToBroadcast);
@@ -73,7 +73,7 @@ public final class InfosysQuery {
                 // FIXME: 07/03/2017 Error Handling
                 e.printStackTrace();
             }
-        });
+        }
 
         lastMessageTimestamp = System.currentTimeMillis() / 1000;
         if (!keyMessageMap.isEmpty()) {
@@ -88,20 +88,5 @@ public final class InfosysQuery {
         httpget.setHeader("http.protocol.content-charset", "UTF-8");
 
         return parser.getAllMessages(closeableHttpClient.execute(httpget));
-    }
-
-    private List<InfosysMessageBean> reverseList(List<InfosysMessageBean> beanList) {
-        List<InfosysMessageBean> returnList = new ArrayList<>();
-
-        if (null == beanList || beanList.isEmpty()) {
-            return returnList;
-        }
-
-
-        for (int i = beanList.size() - 1; i >= 0; i--) {
-            returnList.add(beanList.get(i));
-        }
-
-        return returnList;
     }
 }
